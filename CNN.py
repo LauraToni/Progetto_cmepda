@@ -16,8 +16,8 @@ except:
     raise ImportError('Install NIBABEL')
 
 
-dataset_path_AD_ROI = "AD_CTRL/AD_ROI"
-dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI"
+dataset_path_AD_ROI = "AD_CTRL/AD_ROI_light"
+dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI_light"
 dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
 
@@ -94,7 +94,7 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, x_id ="AD-", y_id="CTRL-"):
         Y.append(1)
     for fname_CTRL in fnames_CTRL:
         X.append(nib.load(fname_CTRL).get_fdata())
-        Y.append(-1)
+        Y.append(0)
     return np.array(X), np.array(Y), fnames_AD, fnames_CTRL
 
 X, Y, fnames_AD, fnames_CTRL = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI)
@@ -124,9 +124,9 @@ print(f'Y train shape: {Y_train.shape}, Y test shape: {Y_test.shape}')
 Defining the CNN model
 """
 
-from keras.layers import Conv3D, Input, Dense, MaxPooling3D, BatchNormalization, ReLU
+from keras.layers import Conv3D, Input, Dense, MaxPooling3D, BatchNormalization, ReLU, Flatten
 from keras.models import Model, load_model
-
+'''
 def make_model(shape=(108, 135, 109, 1)):
     input_tensor = Input(shape=shape)
     hidden = Conv3D(32, (3, 3, 3), strides=1, padding='same', activation='relu')(input_tensor)
@@ -141,3 +141,59 @@ def make_model(shape=(108, 135, 109, 1)):
     model = Model(input_tensor, out)
 
     return model
+'''
+shape=(108, 135, 109, 1)
+input_tensor = Input(shape=shape)
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(input_tensor)
+hidden = ReLU()(hidden)
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(hidden)
+hidden = BatchNormalization()(hidden)
+hidden = ReLU()(hidden)
+hidden= MaxPooling3D((2,2,2))(hidden)
+
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(input_tensor)
+hidden = ReLU()(hidden)
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(hidden)
+hidden = BatchNormalization()(hidden)
+hidden = ReLU()(hidden)
+hidden= MaxPooling3D((2,2,2))(hidden)
+
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(input_tensor)
+hidden = ReLU()(hidden)
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(hidden)
+hidden = BatchNormalization()(hidden)
+hidden = ReLU()(hidden)
+hidden= MaxPooling3D((2,2,2))(hidden)
+
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(input_tensor)
+hidden = ReLU()(hidden)
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(hidden)
+hidden = BatchNormalization()(hidden)
+hidden = ReLU()(hidden)
+hidden= MaxPooling3D((2,2,2))(hidden)
+
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(input_tensor)
+hidden = ReLU()(hidden)
+hidden = Conv3D(3, (3, 3, 3), strides=1, padding='same', activation='relu')(hidden)
+hidden = BatchNormalization()(hidden)
+hidden = ReLU()(hidden)
+hidden= MaxPooling3D((2,2,2))(hidden)
+
+
+hidden= Flatten()(hidden)
+hidden=  Dense(50, activation='relu')(hidden)
+hidden=  Dense(20, activation='relu')(hidden)
+hidden=  Dense(20, activation='relu')(hidden)
+outputs = Dense(1, activation='relu')(hidden)
+model = Model(input_tensor, outputs)
+
+model = Model(inputs=inputs, outputs=outputs)
+model.compile(loss=loss, optimizer='adam',metrics=['accuracy'])
+
+model.summary()
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.figure()
+plt.plot(history.history['MAE'])
+plt.plot(history.history['val_MAE'])
