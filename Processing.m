@@ -20,13 +20,13 @@ metadata=readtable(filename, 'ReadRowNames', true);
 metadata.Properties
 
 
-features=metadata(:,:)
-metadata.ClassLabel=categorical(metadata.DXGROUP)
+features=metadata(:,:);
+metadata.ClassLabel=categorical(metadata.DXGROUP);
 
 for i=1:333
     if metadata.ClassLabel(i)=='AD'
         metadata.Labels(i)=1;
-    else metadata.Labels(i)=-1;
+    else metadata.Labels(i)=0;
     end
 end
 
@@ -77,7 +77,7 @@ end
 
 figure;
 subplot(2,2,1)
-imagesc(squeeze(imageAD(:,:,61,3))); colormap gray %la z è fissata, trasversale
+imagesc(squeeze(imageAD(:,:,50,3))); colormap gray %la z è fissata, trasversale
 subplot(2,2,3)
 imagesc(squeeze(imageAD(:,72,:,3))); colormap gray %la y è fissata, coronale
 subplot(2,2,4)
@@ -89,14 +89,14 @@ imagesc(squeeze(imageAD(61,:,:,3))); colormap gray %la x è fissata, sagittale
 
 imageAD_ROI=[];
 
-for i=1:144  % we  consider just cubic ROIs
+for i=1:144  % we consider just cubic ROIs 144
     disp(i)
-    P1a=7;
-    P1b=114;
-    P2a=6;
-    P2b=140;
-    P3a=1;
-    P3b=109;
+    P1a=11;
+    P1b=109;
+    P2a=12;
+    P2b=138;
+    P3a=24;
+    P3b=110;
     ROI_P=imageAD(P1a:P1b,P2a:P2b,P3a:P3b,i);
     ROI_P=squeeze(ROI_P);
     imageAD_ROI=cat(4,imageAD_ROI,ROI_P);
@@ -106,14 +106,14 @@ end
 
 imageCTRL_ROI=[];
 
-for i=1:189  % we  consider just cubic ROIs
+for i=1:189  % we  consider just cubic ROIs 189
     disp(i)
-    P1a=7; %7
-    P1b=114; %114
-    P2a=6; %6
-    P2b=140; %140
-    P3a=1; %1
-    P3b=109; %109
+    P1a=11; %7
+    P1b=109; %114
+    P2a=12; %6
+    P2b=138; %140
+    P3a=24; %1
+    P3b=110; %109
     ROI_P=imageCTRL(P1a:P1b,P2a:P2b,P3a:P3b,i);
     ROI_P=squeeze(ROI_P);
     imageCTRL_ROI=cat(4,imageCTRL_ROI,ROI_P);
@@ -124,11 +124,11 @@ end
 
 figure;
 subplot(2,2,1)
-imagesc(squeeze(imageAD_ROI(:,:,61,8))); colormap gray %la z è fissata, trasversale
+imagesc(squeeze(imageAD_ROI(:,:,3,3))); colormap gray %la z è fissata, trasversale
 subplot(2,2,3)
-imagesc(squeeze(imageAD_ROI(:,72,:,8))); colormap gray %la y è fissata, coronale
+imagesc(squeeze(imageAD_ROI(:,3,:,3))); colormap gray %la y è fissata, coronale
 subplot(2,2,4)
-imagesc(squeeze(imageAD_ROI(61,:,:,8))); colormap gray %la x è fissata, sagittale
+imagesc(squeeze(imageAD_ROI(3,:,:,3))); colormap gray %la x è fissata, sagittale
 title("Tagliata AD")
 
 
@@ -137,12 +137,73 @@ title("Tagliata AD")
 
 figure;
 subplot(2,2,1)
-imagesc(squeeze(imageCTRL_ROI(:,:,61,8))); colormap gray %la z è fissata, trasversale
+imagesc(squeeze(imageCTRL_ROI(:,:,3,3))); colormap gray %la z è fissata, trasversale
 subplot(2,2,3)
-imagesc(squeeze(imageCTRL_ROI(:,72,:,8))); colormap gray %la y è fissata, coronale
+imagesc(squeeze(imageCTRL_ROI(:,3,:,3))); colormap gray %la y è fissata, coronale
 subplot(2,2,4)
-imagesc(squeeze(imageCTRL_ROI(61,:,:,8))); colormap gray %la x è fissata, sagittale
+imagesc(squeeze(imageCTRL_ROI(3,:,:,3))); colormap gray %la x è fissata, sagittale
 title("Tagliata CTRL")
+
+%% Create a bounding box for the hyppotalamus
+
+%Bounging box AD images
+
+imageAD_ROI_TH=[];
+
+for i=1:144  % we consider just cubic ROIs 144
+    disp(i)
+    P1at=40;
+    P1bt=80;
+    P2at=54;
+    P2bt=108;
+    P3at=29;
+    P3bt=72;
+    ROI_P_TH=imageAD(P1at:P1bt,P2at:P2bt,P3at:P3bt,i);
+    ROI_P_TH=squeeze(ROI_P_TH);
+    imageAD_ROI_TH=cat(4,imageAD_ROI_TH,ROI_P_TH);
+end
+
+%Bounging box CTRL images
+
+imageCTRL_ROI_TH=[];
+
+for i=1:189  % we  consider just cubic ROIs 189
+    disp(i)
+    P1at=40; %7
+    P1bt=80; %114
+    P2at=54; %6
+    P2bt=108; %140
+    P3at=29; %1
+    P3bt=72; %109
+    ROI_P_TH=imageCTRL(P1at:P1bt,P2at:P2bt,P3at:P3bt,i);
+    ROI_P_TH=squeeze(ROI_P_TH);
+    imageCTRL_ROI_TH=cat(4,imageCTRL_ROI_TH,ROI_P_TH);
+end
+
+%Visualize imageAD_ROI_TH
+%visualize the largest slice of one image, in each dimension.
+
+figure;
+subplot(2,2,1)
+imagesc(squeeze(imageAD_ROI_TH(:,:,3,3))); colormap gray %la z è fissata, trasversale
+subplot(2,2,3)
+imagesc(squeeze(imageAD_ROI_TH(:,3,:,3))); colormap gray %la y è fissata, coronale
+subplot(2,2,4)
+imagesc(squeeze(imageAD_ROI_TH(3,:,:,3))); colormap gray %la x è fissata, sagittale
+title("Tagliata AD TH")
+
+
+%Visualize imageCTRL_ROI_TH
+%visualize the largest slice of one image, in each dimension.
+
+figure;
+subplot(2,2,1)
+imagesc(squeeze(imageCTRL_ROI_TH(:,:,3,3))); colormap gray %la z è fissata, trasversale
+subplot(2,2,3)
+imagesc(squeeze(imageCTRL_ROI_TH(:,3,:,3))); colormap gray %la y è fissata, coronale
+subplot(2,2,4)
+imagesc(squeeze(imageCTRL_ROI_TH(3,:,:,3))); colormap gray %la x è fissata, sagittale
+title("Tagliata CTRL TH")
 
 %% Output 
 %create two folders in 'AD_CTRL/' for each ROI set 
@@ -155,7 +216,9 @@ fileID='AD_CTRL/AD_CTRL_metadata.csvAD_CTRL_metadata.csv';
 
 [filepath,name,ext] = fileparts(fileID);
 fileOUTpath_AD=fullfile(filepath,'AD_ROI/');
+fileOUTpath_AD_TH=fullfile(filepath,'AD_ROI_TH/');
 fileOUTpath_CTRL=fullfile(filepath,'CTRL_ROI/');
+fileOUTpath_CTRL_TH=fullfile(filepath,'CTRL_ROI_TH/');
 
 if ~exist(fileOUTpath_AD, 'dir')
     mkdir(fileOUTpath_AD);
@@ -163,6 +226,14 @@ end
 
 if ~exist(fileOUTpath_CTRL, 'dir')
     mkdir(fileOUTpath_CTRL);
+end
+
+if ~exist(fileOUTpath_AD_TH, 'dir')
+    mkdir(fileOUTpath_AD_TH);
+end
+
+if ~exist(fileOUTpath_CTRL_TH, 'dir')
+    mkdir(fileOUTpath_CTRL_TH);
 end
 
 %Saving the AD images
@@ -174,6 +245,8 @@ for i=1:144 %144
     s=num2str(i);
     fileIDout_AD=strcat(fileOUTpath_AD,'smwc1AD-',s,'_ROI','.nii');
     niftiwrite(imageAD_ROI(:,:,:,i),fileIDout_AD);
+    fileIDout_AD_TH=strcat(fileOUTpath_AD_TH,'smwc1AD-',s,'_ROI_TH','.nii');
+    niftiwrite(imageAD_ROI_TH(:,:,:,i),fileIDout_AD_TH);
 end
 
 disp('... done!');
@@ -187,6 +260,8 @@ for i=1:189 %189
     s=num2str(i);
     fileIDout_CTRL=strcat(fileOUTpath_CTRL,'smwc1CTRL-',s,'_ROI','.nii');
     niftiwrite(imageCTRL_ROI(:,:,:,i),fileIDout_CTRL);
+    fileIDout_CTRL_TH=strcat(fileOUTpath_CTRL_TH,'smwc1CTRL-',s,'_ROI_TH','.nii');
+    niftiwrite(imageCTRL_ROI_TH(:,:,:,i),fileIDout_CTRL_TH);
 end
 
 disp('... done!');
