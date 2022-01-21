@@ -17,7 +17,8 @@ except:
 from data_augmentation import VolumeAugmentation
 from input_dati.py import read_dataset,import_csv, cut_file_csv, cut_file_name
 
-os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
+#Attivare il comando sottostante per utilizzare plaidml
+#os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 #pylint: disable=invalid-name
 #pylint: disable=line-too-long
 
@@ -26,10 +27,12 @@ def normalize(x):
     Normalize the intensity of every pixel in the image
     Parameters
     ----------
-    x :
+    x : 4D np.array
+        array containing the images
     Returns
     -------
-     :
+    x : 4D np.array
+        array containg the normalized images
 
     """
     return x/x.max()
@@ -61,91 +64,106 @@ def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
     return img_tot, lbs_tot
 
 def get_model(width=128, height=128, depth=64):
-    """Build a 3D convolutional neural network model."""
+    """
+    Built a 3D CNN model.
+    Parameters
+    ----------
+    widht: int
+        first image's dimension
+    height: int
+        second image's dimension
+    depth: int
+        third image's dimension
 
-    inputs = tf.keras.layers.Input((width, height, depth, 1))
+    Returns
+    -------
+    model: tensorflow.keras.model()
+        the model of the CNN
 
-    x = tf.keras.layers.Conv3D(filters=8, kernel_size=3, activation="relu", kernel_regularizer='l2')(inputs)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
-    x = tf.keras.layers.BatchNormalization()(x)
+    """
 
-    x = tf.keras.layers.Conv3D(filters=16, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2, strides=2)(x)
-    x = tf.keras.layers.BatchNormalization()(x)
+    inputs = tensorflow.keras.Input((width, height, depth, 1))
 
-    x = tf.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
-    x = tf.keras.layers.BatchNormalization()(x)
+    x = tensorflow.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu",kernel_regularizer=tensorflow.keras.regularizers.l2(l2=1e-3))(inputs)
+    x= tensorflow.keras.layers.ReLU()(x)
+    x = tensorflow.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu", kernel_regularizer=tensorflow.keras.regularizers.l2(l2=1e-3))(x)
+    x = tensorflow.keras.layers.BatchNormalization(axis=2)(x)
+    x= tensorflow.keras.layers.ReLU()(x)
+    x = tensorflow.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
 
-    x = tf.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
-    x = tf.keras.layers.BatchNormalization()(x)
+    x = tensorflow.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer=tensorflow.keras.regularizers.l2(l2=1e-3))(x)
+    x= tensorflow.keras.layers.ReLU()(x)
+    x = tensorflow.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer=tensorflow.keras.regularizers.l2(l2=1e-3))(x)
+    x = tensorflow.keras.layers.BatchNormalization(axis=2)(x)
+    x= tensorflow.keras.layers.ReLU()(x)
+    x = tensorflow.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
 
-    x = tf.keras.layers.GlobalAveragePooling3D()(x)
-    x = tf.keras.layers.Dense(units=64, activation="relu", kernel_regularizer='l2')(x)
-    #x=Flatten()(x)
-    x = tf.keras.layers.Dropout(0.3)(x)
+    x = tensorflow.keras.layers.Conv3D(filters=128, kernel_size=3, activation="relu",kernel_regularizer=tensorflow.keras.regularizers.l2(l2=1e-3))(x)
+    #x= tensorflow.keras.layers.ReLU()(x)
+    #x = tensorflow.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu", kernel_regularizer=tensorflow.keras.regularizers.l2(l2=1e-3))(x)
+    x = tensorflow.keras.layers.BatchNormalization(axis=2)(x)
+    x= tensorflow.keras.layers.ReLU()(x)
+    x = tensorflow.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
 
-    outputs = tf.keras.layers.Dense(units=1, activation="sigmoid")(x)
+    #x = Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(x)
+    #x= ReLU()(x)
+    #x = Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
+    #x = BatchNormalization()(x)
+    #x= ReLU()(x)
+    #x = MaxPool3D(pool_size=2,  strides=2)(x)
 
-    # Define the model.
-    model_cnn = tf.keras.models.Model(inputs, outputs, name="3dcnn")
-    return model_cnn
+    #x = Conv3D(filters=128, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
+    #x= ReLU()(x)
+    #x = Conv3D(filters=128, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
+    #x = BatchNormalization()(x)
+    #x= ReLU()(x)
+    #x = MaxPool3D(pool_size=2,  strides=1)(x)
 
-def get_model_art(width=128, height=128, depth=64):
-    """Build a 3D convolutional neural network model."""
-
-    inputs = tf.keras.layers.Input((width, height, depth, 1))
-
-    x = tf.keras.layers.Conv3D(filters=8, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(inputs)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.Conv3D(filters=8, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
-
-    x = tf.keras.layers.Conv3D(filters=16, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.Conv3D(filters=16, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
-
-    x = tf.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
-
-    x = tf.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
-
-    '''
-    x = tf.keras.layers.Conv3D(filters=128, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.Conv3D(filters=128, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=1)(x)
-    '''
-
-    x = tf.keras.layers.Flatten()(x)
-    x = tf.keras.layers.Dropout(0.3)(x)
-    outputs = tf.keras.layers.Dense(units=1, activation="sigmoid")(x)
+    x = tensorflow.keras.layers.Flatten()(x)
+    #x = tensorflow.keras.layers.Dense(256)(x)
+    x = tensorflow.keras.layers.Dropout(0.1)(x)
+    outputs = tensorflow.keras.layers.Dense(units=1, activation="sigmoid")(x)
 
     # Define the model.
-    model_art_cnn = tf.keras.models.Model(inputs, outputs, name="3dcnn")
-    return model_art_cnn
+    model = tensorflow.keras.Model(inputs, outputs, name="3dcnn")
+    return model
+
 
 def dice(pred, true, k = 1):
+    """
+    Calculate Dice index for a single image
+    Parameters
+    ----------
+    pred: float
+        the prediction of the CNN
+    true: int
+        the label of the image
+    Returns
+    -------
+    dice: float
+        Dice index for the image
+    """
     intersection = np.sum(pred[true==k]) * 2.0
     dice_coef = intersection / (np.sum(pred) + np.sum(true))
     return dice_coef
+
+def dice_vectorized(pred, true, k = 1):
+    """
+    Calculate Dice index for an array of images
+    Parameters
+    ----------
+    pred: ???
+        the prediction of the CNN
+    true: ???
+        the label of the image
+    Returns
+    -------
+    dice: float
+        Dice index for the array of images
+    """
+    intersection = 2.0 *np.sum(pred * (true==k), axis=(1,2,3))
+    dice = intersection / (pred.sum(axis=(1,2,3)) + true.sum(axis=(1,2,3)))
+    return dice
 
 if __name__=='__main__':
     dataset_path_AD_ROI = "AD_CTRL/AD_ROI"
@@ -166,8 +184,8 @@ if __name__=='__main__':
     # Define ROI
     #X=X_o[:,36:86,56:106,24:74] #ippocampo
     #X=X_o[:,11:109,12:138,24:110] #bordi neri precisi
-    X=X_o[:,20:100,20:130,20:100]
-    #X=X_o
+    #X=X_o[:,20:100,20:130,20:100]
+    X=X_o
 
     # Divide the dataset in train, validation and test in a static way
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1)
@@ -179,8 +197,12 @@ if __name__=='__main__':
     # Create an array containing both original and augmented data
     X_train_tot, Y_train_tot=stack_train_augmentation(X_train, array_img, Y_train, labels)
 
+    # Augement the images of one dimension
+    X_train_tot = tensorflow.expand_dims(X_train_tot, axis=-1)
+    X_test = tensorflow.expand_dims(X_test, axis=-1)
+
     # Build the model
-    model = get_model_art(width=X.shape[1], height=X.shape[2], depth=X.shape[3])
+    model = get_model(width=X.shape[1], height=X.shape[2], depth=X.shape[3])
     model.summary()
 
     # Set the learning Rate
@@ -192,13 +214,12 @@ if __name__=='__main__':
 
     # Define callbacks
     checkpoint_cb = tf.keras.callbacks.ModelCheckpoint(
-            "model.{epoch:02d}-{val_MAE:.4f}_C8_C8_C16_C16_C32_C32_D32_Hipp_art.h5", save_best_only=True
+            "model.{epoch:02d}-{val_MAE:.4f}_ROI.h5", save_best_only=True
     )
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
     #Fit the data
-    #The sample is automatically split in two so that 50% of it is used for validation and the other half for training
-    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=TRUE, epochs=20, callbacks=[early_stopping, ReduceLROnPlateau])
+    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=TRUE, epochs=60, callbacks=[early_stopping, ReduceLROnPlateau])
 
     #history contains information about the training
     print(history.history.keys())
@@ -214,18 +235,23 @@ if __name__=='__main__':
 
     #history = model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, epochs=10, callbacks=[checkpoint_cb, ReduceLROnPlateau])
 
-    # Create reshaped arrays to compute DICE coefficient
-    idx=67
-    xtrain = X_train_tot[idx][np.newaxis,...]
-    ytrain = Y_train_tot[idx][np.newaxis,...]
-    print(Y_train_tot[idx].shape, ytrain.shape)
-    ypred = model.predict(xtrain).squeeze()>0.1
-    ytrue = Y_train_tot[idx].squeeze()
 
     # Compute DICE coefficient
+    idx=67
+    xtrain = X_train[idx][np.newaxis,...]
+    ytrain = Y_train[idx][np.newaxis,...]
+    print(Y_train[idx].shape, ytrain.shape)
+
+    ypred = model.predict(xtrain).squeeze()>0.2
+    ytrue = Y_train[idx].squeeze()
+
     dice_value = dice(ypred, ytrue)
     print(f'Indice di DICE:{dice_value}')
-    print(ypred.shape, ytrue.shape)
+
+    dice_value=dice_vectorized(Y_train ,model.predict(X_train)>0.2)
+
+    dice_mean_train = dice_vectorized(Y_train,model.predict(X_train)>0.2).mean()
+    dice_mean_test = dice_vectorized(Y_test,model.predict(X_test)>0.2).mean()
 
     # Use the model to predict the probability that a given y value is 1
     y_score = model.predict(X_test)
