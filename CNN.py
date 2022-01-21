@@ -153,19 +153,13 @@ if __name__=='__main__':
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data
-    df, head = import_csv(dataset_path_metadata)
+    df, head, dic_info = import_csv(dataset_path_metadata)
     features = ['DXGROUP', 'ID', 'AGE', 'MMSE']
     print(df[features])
 
-    file_id_list = df['ID'].tolist()
-    file_id_csv = np.array(file_id_list)
-    file_age_list = df['AGE'].tolist()
-    file_age_csv = np.array(file_age_list)
-    file_mmse_list = df['MMSE'].tolist()
-    file_mmse_csv = np.array(file_mmse_list)
-
     # import images, labels and file names
-    X_o, Y, fnames_AD, fnames_CTRL, file_id = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI)
+    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI, dic_info)
+
     #Normalization of intensity voxel values
     X_o=normalize(X_o)
 
