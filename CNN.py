@@ -15,7 +15,8 @@ except:
     raise ImportError('Install NIBABEL')
 
 from data_augmentation import VolumeAugmentation
-from input_dati.py import read_dataset,import_csv, cut_file_csv, cut_file_name
+from input_dati import read_dataset,import_csv, cut_file_name
+from statistics import roc_curve
 
 #Attivare il comando sottostante per utilizzare plaidml
 #os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
@@ -99,28 +100,11 @@ def get_model(width=128, height=128, depth=64):
     x = tensorflow.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
 
     x = tensorflow.keras.layers.Conv3D(filters=128, kernel_size=3, activation="relu",kernel_regularizer=tensorflow.keras.regularizers.l2(l2=1e-3))(x)
-    #x= tensorflow.keras.layers.ReLU()(x)
-    #x = tensorflow.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu", kernel_regularizer=tensorflow.keras.regularizers.l2(l2=1e-3))(x)
     x = tensorflow.keras.layers.BatchNormalization(axis=2)(x)
     x= tensorflow.keras.layers.ReLU()(x)
     x = tensorflow.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
 
-    #x = Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer='l1_l2')(x)
-    #x= ReLU()(x)
-    #x = Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    #x = BatchNormalization()(x)
-    #x= ReLU()(x)
-    #x = MaxPool3D(pool_size=2,  strides=2)(x)
-
-    #x = Conv3D(filters=128, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    #x= ReLU()(x)
-    #x = Conv3D(filters=128, kernel_size=3, activation="relu", kernel_regularizer='l2')(x)
-    #x = BatchNormalization()(x)
-    #x= ReLU()(x)
-    #x = MaxPool3D(pool_size=2,  strides=1)(x)
-
     x = tensorflow.keras.layers.Flatten()(x)
-    #x = tensorflow.keras.layers.Dense(256)(x)
     x = tensorflow.keras.layers.Dropout(0.1)(x)
     outputs = tensorflow.keras.layers.Dense(units=1, activation="sigmoid")(x)
 
@@ -128,42 +112,6 @@ def get_model(width=128, height=128, depth=64):
     model = tensorflow.keras.Model(inputs, outputs, name="3dcnn")
     return model
 
-
-def dice(pred, true, k = 1):
-    """
-    Calculate Dice index for a single image
-    Parameters
-    ----------
-    pred: float
-        the prediction of the CNN
-    true: int
-        the label of the image
-    Returns
-    -------
-    dice: float
-        Dice index for the image
-    """
-    intersection = np.sum(pred[true==k]) * 2.0
-    dice_coef = intersection / (np.sum(pred) + np.sum(true))
-    return dice_coef
-
-def dice_vectorized(pred, true, k = 1):
-    """
-    Calculate Dice index for an array of images
-    Parameters
-    ----------
-    pred: ???
-        the prediction of the CNN
-    true: ???
-        the label of the image
-    Returns
-    -------
-    dice: float
-        Dice index for the array of images
-    """
-    intersection = 2.0 *np.sum(pred * (true==k), axis=(1,2,3))
-    dice = intersection / (pred.sum(axis=(1,2,3)) + true.sum(axis=(1,2,3)))
-    return dice
 
 if __name__=='__main__':
     dataset_path_AD_ROI = "AD_CTRL/AD_ROI"
@@ -176,8 +124,7 @@ if __name__=='__main__':
     print(df[features])
 
     # import images, labels and file names
-    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI, dic_info)
-
+    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI, dic_info, str_1='1', str_2='.')
     #Normalization of intensity voxel values
     X_o=normalize(X_o)
 
@@ -188,7 +135,7 @@ if __name__=='__main__':
     X=X_o
 
     # Divide the dataset in train, validation and test in a static way
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=11)
 
     #Augment the data using VolumeAugmentation class
     mass_gen = VolumeAugmentation(X_train, Y_train, shape=(X.shape[1], X.shape[2], X.shape[3]))
@@ -214,7 +161,7 @@ if __name__=='__main__':
 
     # Define callbacks
     checkpoint_cb = tf.keras.callbacks.ModelCheckpoint(
-            "model.{epoch:02d}-{val_MAE:.4f}_ROI.h5", save_best_only=True
+            "3d_image_classification_{val_MAE}_Hipp.h5", save_best_only=True
     )
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
@@ -233,45 +180,5 @@ if __name__=='__main__':
     plt.yscale('log')
     plt.show()
 
-    #history = model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, epochs=10, callbacks=[checkpoint_cb, ReduceLROnPlateau])
-
-
-    # Compute DICE coefficient
-    idx=67
-    xtrain = X_train[idx][np.newaxis,...]
-    ytrain = Y_train[idx][np.newaxis,...]
-    print(Y_train[idx].shape, ytrain.shape)
-
-    ypred = model.predict(xtrain).squeeze()>0.2
-    ytrue = Y_train[idx].squeeze()
-
-    dice_value = dice(ypred, ytrue)
-    print(f'Indice di DICE:{dice_value}')
-
-    dice_value=dice_vectorized(Y_train ,model.predict(X_train)>0.2)
-
-    dice_mean_train = dice_vectorized(Y_train,model.predict(X_train)>0.2).mean()
-    dice_mean_test = dice_vectorized(Y_test,model.predict(X_test)>0.2).mean()
-
-    # Use the model to predict the probability that a given y value is 1
-    y_score = model.predict(X_test)
-    fpr, tpr, thresholds = metrics.roc_curve(Y_test, y_score)
-
-    #calculate AUC of model
-    auc = metrics.roc_auc_score(Y_test, y_score)
-
-    #print AUC score
-    print(auc)
-
-    #plot ROC_curve
-    plt.figure()
-    lw = 2
-    plt.plot(fpr, tpr, color="darkorange", lw=lw, label="ROC curve (area = %0.2f)" % auc,)
-    plt.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel("False Positive Rate")
-    plt.ylabel("True Positive Rate")
-    plt.title("Receiver operating characteristic example")
-    plt.legend(loc="lower right")
-    plt.show()
+    #Display ROC curve and calculate AUC
+    auc = roc_curve(X_test, Y_test)
