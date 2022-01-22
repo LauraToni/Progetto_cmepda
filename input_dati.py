@@ -29,7 +29,11 @@ def cut_file_name (file_name, str_1, str_2):
     second_cut = first_cut[:(pos_2)]
     return second_cut
 
+<<<<<<< HEAD
 def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id ="AD-", y_id="CTRL-"):
+=======
+def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, x_id ="AD-", y_id="CTRL-"):
+>>>>>>> 2828c91e5e3f283c9e1da2191bc2d53b125a6eaf
     """
     load images from NIFTI directory
     Parameters
@@ -39,6 +43,10 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id
     dataset_path_CTRL: str
         directory path for CTRL images
     file_csv =
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2828c91e5e3f283c9e1da2191bc2d53b125a6eaf
     x_id: str
         identification string in the filename of AD images
     y_id: str
@@ -61,11 +69,15 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id
     Y = []
     id = []
     file_age = []
+<<<<<<< HEAD
     i=1
+=======
+>>>>>>> 2828c91e5e3f283c9e1da2191bc2d53b125a6eaf
 
     for fname_AD in file_names_AD:
         X.append(nib.load(fname_AD).get_fdata())
         Y.append(1)
+<<<<<<< HEAD
         name = cut_file_name(fname_AD, str_1, str_2)
         id.append(name)
         file_age.append(dic_csv[name])
@@ -80,6 +92,19 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id
         file_age.append(dic_csv[name])
         print(f'Caricamento immagine {name} ({i} di 189)')
         i+=1
+=======
+        name = cut_file_name(fname_AD)
+        id.append(name)
+        file_age.append(dic_csv[name])
+
+    for fname_CTRL in file_names_CTRL:
+        X.append(nib.load(fname_CTRL).get_fdata())
+        Y.append(0)
+        name = cut_file_name(fname_CTRL)
+        id.append(name)
+        file_age.append(dic_csv[name])
+
+>>>>>>> 2828c91e5e3f283c9e1da2191bc2d53b125a6eaf
     return np.array(X), np.array(Y), file_names_AD, file_names_CTRL, id, file_age
 
 def import_csv(path):
