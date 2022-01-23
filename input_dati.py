@@ -1,7 +1,3 @@
-import os
-from glob import glob
-import math
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from skimage.io import imread
@@ -32,29 +28,30 @@ def cut_file_name (file_name):
 def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, x_id ="AD-", y_id="CTRL-"):
     """
     load images from NIFTI directory
+
     Parameters
     ----------
-    dataset_path_AD: str
+    dataset_path_AD : str
         directory path for AD images
-    dataset_path_CTRL: str
+    dataset_path_CTRL : str
         directory path for CTRL images
     file_csv =
 
-    x_id: str
+    x_id : str
         identification string in the filename of AD images
-    y_id: str
+    y_id : str
         identification string in the filename of CTRL images
 
     Returns
     -------
     X : np.array
         array of AD and CTRL images data
-    Y: np.array
+    Y : np.array
         array of labels
 
-    file_names_AD: list (?)
+    file_names_AD : list (?)
         list containig AD images file names
-    file_names_CTRL: list (?)
+    file_names_CTRL : list (?)
         list containig CTRL images file names
 
     """
@@ -85,9 +82,10 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, x_id ="AD-", y_id=
 def import_csv(path):
     """
     Import metadata from csv file
+
     Parameters
     ----------
-    path: str
+    path : str
         directory path of the metadata file
     Returns
     -------
