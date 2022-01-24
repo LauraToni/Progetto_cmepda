@@ -17,14 +17,27 @@ try:
 except:
     raise ImportError('Install NIBABEL')
 
-#from data_augmentation import VolumeAugmentation
-#from input_dati import cut_file_name, read_dataset, import_csv
-#from CNN import normalize
+from data_augmentation import VolumeAugmentation
+from input_dati import cut_file_name, read_dataset, import_csv
+
+def normalize(x):
+    """
+    Normalize the intensity of every pixel in the image
+    Parameters
+    ----------
+    x : 4D np.array
+        array containing the images
+    Returns
+    -------
+    x : 4D np.array
+        array containg the normalized images
+
+    """
+    return x/x.max()
 
 def dice(pred, true, k = 1):
     """
     Calculate Dice index for a single image
-
     Parameters
     ----------
     pred: float
@@ -43,12 +56,11 @@ def dice(pred, true, k = 1):
 def dice_vectorized(pred, true, k = 1):
     """
     Calculate Dice index for an array of images
-
     Parameters
     ----------
-    pred : ???
+    pred: ???
         the prediction of the CNN
-    true : ???
+    true: ???
         the label of the image
     Returns
     -------
@@ -59,19 +71,18 @@ def dice_vectorized(pred, true, k = 1):
     dice = intersection / (pred.sum() + true.sum())
     return dice
 
-def roc_curve(xtest, ytest):
+def roc_curve(xtest, ytest, model):
     """
     Display ROC curve and calculate AUC
-
     Parameters
     ----------
-    xtest : 4D np.array
+    xtest: 4D np.array
         array containg test images
-    ytest : 2D np.array
+    ytest: 2D np.array
         array containing test labels
     Returns
     -------
-    auc : float
+    auc: float
         area under the ROC curve
     """
     y_score = model.predict(xtest)
@@ -100,7 +111,7 @@ if __name__=='__main__':
     dataset_path_AD_ROI = "AD_CTRL/AD_s3"
     dataset_path_CTRL_ROI = "AD_CTRL/CTRL_s3"
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
-    '''
+
     # Import csv data
     df, head, dic_info = import_csv(dataset_path_metadata)
     features = ['DXGROUP', 'ID', 'AGE', 'MMSE']
@@ -146,4 +157,3 @@ if __name__=='__main__':
     print(f'indice di Dice vettorizzato dati di train: {dice_value}')
     print(f'indice di Dice vettorizzato medio dati di train: {dice_mean_train}')
     print(f'indice di Dice vettorizzato medio dati di test: {dice_mean_test}')
-    '''

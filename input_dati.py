@@ -1,3 +1,7 @@
+import os
+from glob import glob
+import math
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from skimage.io import imread
@@ -11,49 +15,44 @@ from nibabel.testing import data_path
 
 from data_augmentation import VolumeAugmentation
 
-os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
+#os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 #pylint: disable=invalid-name
 #pylint: disable=line-too-long
 
-def cut_file_name (file_name):
-    str_1 = '1'
+def cut_file_name (file_name, str_1, str_2):
+    #str_1 = '1'
     pos_1 = file_name.index(str_1)
     first_cut = file_name[(pos_1+1):]
 
-    str_2 = '_'
+    #str_2 = '_'
     pos_2 = first_cut.index(str_2)
     second_cut = first_cut[:(pos_2)]
     return second_cut
 
-def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, x_id ="AD-", y_id="CTRL-"):
+def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id ="AD-", y_id="CTRL-"):
     """
     load images from NIFTI directory
-
     Parameters
     ----------
-    dataset_path_AD : str
+    dataset_path_AD: str
         directory path for AD images
-    dataset_path_CTRL : str
+    dataset_path_CTRL: str
         directory path for CTRL images
     file_csv =
-
-    x_id : str
+    x_id: str
         identification string in the filename of AD images
-    y_id : str
+    y_id: str
         identification string in the filename of CTRL images
-
     Returns
     -------
     X : np.array
         array of AD and CTRL images data
-    Y : np.array
+    Y: np.array
         array of labels
-
-    file_names_AD : list (?)
+    file_names_AD: list (?)
         list containig AD images file names
-    file_names_CTRL : list (?)
+    file_names_CTRL: list (?)
         list containig CTRL images file names
-
     """
 
     file_names_AD = sorted(glob(os.path.join(dataset_path_AD, f"*{x_id}*.nii"  )))
@@ -62,37 +61,38 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, x_id ="AD-", y_id=
     Y = []
     id = []
     file_age = []
+    i=1
 
     for fname_AD in file_names_AD:
         X.append(nib.load(fname_AD).get_fdata())
         Y.append(1)
-        name = cut_file_name(fname_AD)
+        name = cut_file_name(fname_AD, str_1, str_2)
         id.append(name)
         file_age.append(dic_csv[name])
-
+        print(f'Caricamento immagine {name} ({i} di 144)')
+        i+=1
+    i=1
     for fname_CTRL in file_names_CTRL:
         X.append(nib.load(fname_CTRL).get_fdata())
         Y.append(0)
-        name = cut_file_name(fname_CTRL)
+        name = cut_file_name(fname_CTRL, str_1, str_2)
         id.append(name)
         file_age.append(dic_csv[name])
-
+        print(f'Caricamento immagine {name} ({i} di 189)')
+        i+=1
     return np.array(X), np.array(Y), file_names_AD, file_names_CTRL, id, file_age
 
 def import_csv(path):
     """
     Import metadata from csv file
-
     Parameters
     ----------
-    path : str
+    path: str
         directory path of the metadata file
     Returns
     -------
     df :
-
     head :
-
     """
     df = pd.read_csv(path, sep=',')
     head=df.head()

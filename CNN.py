@@ -1,3 +1,4 @@
+""" Convolutional neural network applied to neurological AD and CTRL images"""
 import os
 from glob import glob
 import math
@@ -25,7 +26,6 @@ from statistics import roc_curve
 def normalize(x):
     """
     Normalize the intensity of every pixel in the image
-
     Parameters
     ----------
     x : 4D np.array
@@ -41,11 +41,11 @@ def normalize(x):
 def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
     """
     Creates an array containing both original and augmented images. Does the same with their labels
-
     Parameters
     ----------
     img : 4D np.array
         array containing the images used for the training
+
     img_aug: 4D np.array
         array containing the augmented images used for the training
     lbs: np.array
@@ -67,7 +67,6 @@ def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
 def get_model(width=128, height=128, depth=64):
     """
     Built a 3D CNN model.
-
     Parameters
     ----------
     widht: int
@@ -115,8 +114,8 @@ def get_model(width=128, height=128, depth=64):
 
 
 if __name__=='__main__':
-    dataset_path_AD_ROI = "AD_CTRL/AD_ROI"
-    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI"
+    dataset_path_AD_ROI = "AD_CTRL/AD_s3"
+    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_s3"
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data
@@ -130,10 +129,10 @@ if __name__=='__main__':
     X_o=normalize(X_o)
 
     # Define ROI
-    #X=X_o[:,36:86,56:106,24:74] #ippocampo
+    X=X_o[:,36:86,56:106,24:74] #ippocampo
     #X=X_o[:,11:109,12:138,24:110] #bordi neri precisi
     #X=X_o[:,20:100,20:130,20:100]
-    X=X_o
+    #X=X_o
 
     # Divide the dataset in train, validation and test in a static way
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=11)
@@ -167,7 +166,7 @@ if __name__=='__main__':
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
     #Fit the data
-    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=TRUE, epochs=60, callbacks=[early_stopping, ReduceLROnPlateau])
+    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=TRUE, epochs=2, callbacks=[checkpoint_cb, early_stopping, ReduceLROnPlateau])
 
     #history contains information about the training
     print(history.history.keys())
@@ -182,4 +181,4 @@ if __name__=='__main__':
     plt.show()
 
     #Display ROC curve and calculate AUC
-    auc = roc_curve(X_test, Y_test)
+    auc = roc_curve(X_test, Y_test, model)
