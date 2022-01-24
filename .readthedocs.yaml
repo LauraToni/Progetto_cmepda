@@ -18,8 +18,7 @@ python:
   #Install our python package before building the docs
   install:
     - method: pip
-      path: .
-    - requirements.txt  
+      path: .  
     
 sphinx:
   fail_on_warning: true
