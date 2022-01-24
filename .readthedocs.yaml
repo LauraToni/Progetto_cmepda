@@ -18,6 +18,3 @@ python:
   #Install our python package before building the docs
   install:
     - requirements: requirements.txt  
-    
-sphinx:
-  fail_on_warning: true
