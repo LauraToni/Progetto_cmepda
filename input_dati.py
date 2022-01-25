@@ -29,7 +29,7 @@ def cut_file_name (file_name, str_1, str_2):
     second_cut = first_cut[:(pos_2)]
     return second_cut
 
-def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id ="AD-", y_id="CTRL-"):
+def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv_age, dic_csv_mmse, str_1, str_2, x_id ="AD-", y_id="CTRL-"):
     """
     load images from NIFTI directory
     Parameters
@@ -61,6 +61,7 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id
     Y = []
     id = []
     file_age = []
+    file_mmse = []
     i=1
 
     for fname_AD in file_names_AD:
@@ -68,7 +69,9 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id
         Y.append(1)
         name = cut_file_name(fname_AD, str_1, str_2)
         id.append(name)
-        file_age.append(dic_csv[name])
+        file_age.append(dic_csv_age[name])
+        file_mmse.append(dic_csv_mmse[name])
+
         print(f'Caricamento immagine {name} ({i} di 144)')
         i+=1
     i=1
@@ -77,10 +80,11 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv, str_1, str_2, x_id
         Y.append(0)
         name = cut_file_name(fname_CTRL, str_1, str_2)
         id.append(name)
-        file_age.append(dic_csv[name])
+        file_age.append(dic_csv_age[name])
+        file_mmse.append(dic_csv_mmse[name])
         print(f'Caricamento immagine {name} ({i} di 189)')
         i+=1
-    return np.array(X), np.array(Y), file_names_AD, file_names_CTRL, id, file_age
+    return np.array(X), np.array(Y), file_names_AD, file_names_CTRL, id, file_age, file_mmse
 
 def import_csv(path):
     """
@@ -105,13 +109,17 @@ def import_csv(path):
     file_mmse_list = df['MMSE'].tolist()
     file_mmse_csv = np.array(file_mmse_list)
 
-    dic = {}
-    for i in range(0, len(file_id_csv)):
-        dic[file_id_csv[i]] = file_age_csv[i]
-        #dic[file_id_csv[i]] = file_mmse_csv[i]
-    #print(dic)
+    dic_age = {}
+    dic_mmse = {}
 
-    return df, head, dic
+
+    for i in range(0, len(file_id_csv)):
+        dic_age[file_id_csv[i]] = file_age_csv[i]
+        dic_mmse[file_id_csv[i]] = file_mmse_csv[i]
+
+
+
+    return df, head, dic_age, dic_mmse
 
 if __name__=='__main__':
     dataset_path_AD_ROI = "AD_CTRL/AD_ROI"
@@ -119,11 +127,12 @@ if __name__=='__main__':
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data
-    df, head, dic_info = import_csv(dataset_path_metadata)
+    df, head, dict_age, dict_mmse = import_csv(dataset_path_metadata)
     features = ['DXGROUP', 'ID', 'AGE', 'MMSE']
     print(df[features])
 
 
     # import images, labels and file names
-    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI, dic_info)
+    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age, file_mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='_')
     print(file_age)
+    print(file_mmse)
