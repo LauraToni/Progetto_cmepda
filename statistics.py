@@ -181,6 +181,151 @@ def plot_cv_roc(X, y, classifier, n_splits=5, scaler=None):
     plt.legend(loc="lower right", prop={'size': 15})
     plt.show()
 
+def dataframe_test(xtest,ytest, fileAge, fileMMSE):
+    '''
+    Create the dataframes containig labels, age, MMSE and a confront_prediction
+    for test's images. confront_prediction is an array that is 1 if the prediction
+    of the model is correct and 0 if it is wrong.
+    Parameters
+    ----------
+    xtest : 4D array
+        array containg the test's images
+    ytest : 1D array
+        array containg the labels of test's images
+    fileAge : Tupla
+        Tupla containing the age relative to test's images
+    fileMMSE : Tupla
+        Tupla containg the MMSE relative to test's images
+    Returns
+    -------
+    dataFrame : pandas dataframe
+        dataframe contining the feautures of all test's images
+    dataFrame_AD : pandas dataframe
+        dataframe contaning the features of test images belongig to AD category
+    dataFrame_CTRL :
+        dataframe contaning the feature of test images belongig to CTRL category
+    '''
+
+    X_test = tensorflow.expand_dims(xtest, axis=-1)
+    y_pred_test = model.predict(X_test)
+
+    y_conf = np.empty(shape=len(Y_test), dtype=bool)
+
+    for i in range(0,len(y_pred_test)):
+        y_conf[i] = (ytest[i] == (y_pred_test[i]>0.5))
+
+    y_Conf = np.empty(shape=len(Y_test), dtype=int)
+    for i in range(0, len(y_conf)):
+        if y_conf[i]==True:
+            y_Conf[i]=1
+        if y_conf[i]==False:
+            y_Conf[i]=0
+
+    file_mmse=np.array(fileMMSE)
+    file_age=np.array(fileAgE)
+
+    file_mmse_train, file_mmse_test, file_age_train, file_age_test = train_test_split(file_mmse, file_age, test_size=0.1, random_state=11)
+
+    d = {'labels_test': Y_test, 'confront_prediction': y_Conf, 'Age_test' : file_age_test, 'MMSE_test' : file_mmse_test }
+    dataFrame = pd.DataFrame(data=d)
+    dataFrame_AD = dataFrame[dataFrame.labels_test == 1]
+    dataFrame_CTRL = dataFrame[dataFrame.labels_test == 0]
+
+    return dataFrame, dataFrame_AD, dataFrame_CTRL
+
+def correlation(df, dfAD, dfCTRL):
+    '''
+    Calculate correlationd between features in dataframes containing the features
+    of the test images and their predicted category.
+    Parameters
+    ----------
+    df : pandad dataframe
+        dataframe containing the features of all the test images
+    dfAD : pandad dataframe
+            dataframe containing the features of the test images belongig to AD category
+    dfCTRL: pandad dataframe
+            dataframe containing the features of the test images belongig to CTRL category
+    Returns
+    -------
+    None
+    '''
+    #correlazione con tutti i casi di test, quindi AD e controllo
+    print(df.drop('labels_test', axis=1).corr())
+    #correlazione con AD di test
+    print(dfAD.drop('labels_test', axis=1).corr())
+    #correlazione con CTRL di test
+    print(dfCTRL.drop('labels_test', axis=1).corr())
+    #heatmap
+    sns.heatmap(df.drop('labels_test', axis=1).corr())
+    sns.heatmap(dfAD.drop('labels_test', axis=1).corr())
+    sns.heatmap(dfCTRL.drop('labels_test', axis=1).corr())
+
+    return None
+
+def permutation(df, Nperm, feature='Age_test'):
+    '''
+    Calculate the permutation test with the test image features.
+    The null hypothesis is that the feature mean distribution for image predicted
+    correctly and wrongly are the same against the hypothesis that they are diffent.
+    The p-value for the null hypothesis is returned.
+    Parameters
+    ----------
+    df : pandas dataframe
+        dataframe containing the features of all the test images
+    Nperm : int
+        number of permutation
+    feature : string
+        name of the feature in the dataset
+    Returns
+    -------
+    p_value : float
+        p_value of the null hypothesis
+
+    '''
+    feature_pred = df[df['Confronto_predizione'] == 1][feature]
+    feature_no_pred = df[df['Confronto_predizione'] == 0][feature]
+
+    #media dell'età delle persone predette correttamente
+    feature_pred_mean=feature_pred.mean()
+
+    #media dell'età delle persone NON predette correttamente
+    feature_no_pred_mean=feature_no_pred.mean()
+
+    #Differenza delle età medie dei gruppo predetti correttamente e non correttamente
+    feature_diff=np.absolute(feature_pred_mean - feature_no_pred_mean)
+
+
+    n_perm = Nperm
+    n_examples=df.shape[0]
+
+    feature_all = np.append(feature_pred, feature_no_pred)
+
+    feature_diff_perm = []
+    for i in range(n_perm):
+        perm_i = np.random.permutation(feature_all)
+        avg_A = perm_i[1:feature_pred.shape[0]].mean()
+        avg_B = perm_i[feature_pred.shape[0]:n_examples].mean()
+        feature_diff_perm = np.append(feature_diff_perm, avg_A - avg_B)
+    feature_diff_perm.shape
+
+    _ = plt.hist(feature_diff_perm, 25, histtype='step')
+    plt.axvline(feature_diff, linestyle='--', color='red')
+    plt.show()
+
+    feature_diff_perm[abs(feature_diff_perm) > abs(feature_diff)].shape[0]
+
+    r = feature_diff_perm[feature_diff_perm > feature_diff].shape[0]
+    p_value = (r + 1 )/ (n_perm +1)
+    if r == 0:
+        print(f'The p value is p < {p_value:.3f}')
+    else:
+        print(f'The p value is p = {p_value:.3f}')
+    if p_value < 0.05:
+        print('The difference between the mean weight loss of the two groups is statistically significant! ')
+    else:
+        print('The null hypothesis cannot be rejected')
+
+    return p_value
 
 if __name__=='__main__':
 
@@ -194,7 +339,7 @@ if __name__=='__main__':
     print(df[features])
 
     # import images, labels and file names
-    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI, dic_info, str_1='1', str_2='.')
+    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age, file_mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI, dic_info, str_1='1', str_2='.')
 
     X_o=normalize(X_o)
 
@@ -210,9 +355,9 @@ if __name__=='__main__':
 
     auc = roc_curve(X_test, Y_test, model)
 
-    plot_cv_roc(X,Y, model, 5, scaler=None)
-
+    #plot_cv_roc(X,Y, model, 5, scaler=None)
     '''
+
     #Calcolo indice di Dice
     idx=67
     xtrain = X_train[idx][np.newaxis,...]
@@ -238,25 +383,14 @@ if __name__=='__main__':
     #print(f'indice di Dice vettorizzato dati di train: {dice_value}')
     #print(f'indice di Dice vettorizzato medio dati di train: {dice_mean_train}')
     #print(f'indice di Dice vettorizzato medio dati di test: {dice_mean_test}')
-
-    X_test = tensorflow.expand_dims(X_test, axis=-1)
-    y_pred_test = model.predict(X_test)
-
-    y_pred_bool = y_pred_test > 0.5
-    y_test_bool = Y_test > 0.5
-    y_corr = np.empty(shape=len(Y_test), dtype=bool)
-
-    for i in range(0,len(y_pred_test)):
-        y_corr[i] = (y_test_bool[i] == y_pred_bool[i])
-
-    print(y_corr)
-
-    y_Corr = np.empty(shape=len(Y_test), dtype=int)
-    for i in range(0, len(y_corr)):
-        if y_corr[i]==True:
-            y_Corr[i]=1
-        if y_corr[i]==False:
-            y_Corr[i]=0
-
-    print(y_Corr)
     '''
+
+    '''
+    Funzione per creare il pandas dataframe con le predizioni delle immagini di test
+    '''
+
+    df, df_AD, df_CTRL=dataframe_test(X_test, Y_test, file_age, file_mmse)
+    print(df.head())
+    correlation(df, df_AD, df_CTRL)
+    permutation(df, Nperm=1000, feature='Age_test')
+    permutation(df, Nperm=1000, feature='MMSE_test')
