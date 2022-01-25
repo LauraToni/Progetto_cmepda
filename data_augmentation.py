@@ -18,7 +18,9 @@ class VolumeAugmentation():
     def __init__(self, x, y, shape):
         """
         Initialize the sequence
-        Parameters:
+        
+        Parameters
+        ----------
         x : np.array
             array containing 3D images
         y : np.array
@@ -37,15 +39,16 @@ class VolumeAugmentation():
     def augment(self):
         """
         Create two arrays cointaing rotated images and labels
+        
         Parameters
         ----------
         None
 
         Returns
-        ----------
-        X : 3D np.array
+        -------
+        3D np.array
             array containig 3D images
-        Y : np.array
+        np.array
             array containing labels
 
         """
@@ -61,30 +64,30 @@ class VolumeAugmentation():
     def rotate(self, volume):
         """
         Rotate the volume by a few degrees
+        
         Parameters
         ----------
         volume : 3D image
             image that you want to rotate
 
         Returns
-        ----------
-        augmented_volume : 3D image
+        -------
+        3D image
             rotated image
-
         """
         def scipy_rotate(volume):
             """
             Define some rotation angles and rotate the volume
+            
             Parameters
             ----------
             volume : 3D image
                 image that you want to rotate
 
             Returns
-            ----------
-            volume : 3D image
+            -------
+            3D image
                 rotated image
-
             """
             # define some rotation angles
             angles = [-20, -10, -5, 5, 10, 20]
