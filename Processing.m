@@ -1,28 +1,28 @@
 %% Implement preprocessing NifTi images cutting borders and saving them in a new folder
 
-%The objective is to upload and read NifTi files from the directory
-%"AD_CTRL": 
-%the dyrectory contains to other dyrectories containing to different
-%dataset
+% - Upload and read NifTi files from the directory;
+% - Define a ROI containing only the hyppocampus and save them in a folder;
+% - Define a ROI containing a region that doesn't contain the hyppocampus and
+%save them in a folder;
+% - Print two images hilighting the ROIs considered.
 
 close all
 clear
 clc
 %% Read csv file containing metadata
-%Read csv file containing metadata and display it
-%Add labels column
-%Save the modified table in a new file.csv
+% - Read csv file containing metadata and display it;
+% - Add labels column;
+% - Save the modified table in a new file.csv.
 
 filename='AD_CTRL/AD_CTRL_metadata.csv';
 
 metadata=readtable(filename, 'ReadRowNames', true);
 
-metadata.Properties
-
-
+metadata.Properties;
 features=metadata(:,:);
 metadata.ClassLabel=categorical(metadata.DXGROUP);
 
+% Add labels column
 for i=1:333
     if metadata.ClassLabel(i)=='AD'
         metadata.Labels(i)=1;
@@ -32,8 +32,8 @@ end
 
 summary(metadata)  
 
+% Save the new metadata
 metadata = removevars(metadata,{'ClassLabel'});
-
 writetable(metadata,'AD_CTRL_metadata_labels.csv','WriteRowNames',true);
 
 %% Read NifTi files
@@ -46,11 +46,10 @@ file_path=(strcat(dataset_path,file_name));
 
 V = niftiread(file_path);
 
-%Display a slice of the image
-
+% Display a slice of the image
 %figure; imagesc(squeeze(V(:,30,:))); colormap gray
 
-%Upload file Nifti in a 4D matrix where the first, second and third
+% Upload file Nifti in a 4D matrix where the first, second and third
 %dimension are the image voxels and the forth dimension is the
 %concatenation direction
 
@@ -85,7 +84,7 @@ imagesc(squeeze(imageAD(61,:,:,3))); colormap gray %la x è fissata, sagittale
 
 %% Create a bounding box
 
-%Bounging box AD images
+% Bounding box AD images
 
 imageAD_ROI=[];
 
@@ -102,11 +101,11 @@ for i=1:144  % we consider just cubic ROIs 144
     imageAD_ROI=cat(4,imageAD_ROI,ROI_P);
 end
 
-%Bounging box CTRL images
+% Bounding box CTRL images
 
 imageCTRL_ROI=[];
 
-for i=1:189  % we  consider just cubic ROIs 189
+for i=1:189  % we consider just cubic ROIs 189
     disp(i)
     P1a=11; %7
     P1b=109; %114
@@ -119,8 +118,8 @@ for i=1:189  % we  consider just cubic ROIs 189
     imageCTRL_ROI=cat(4,imageCTRL_ROI,ROI_P);
 end
 
-%Visualize imageAD_ROI
-%visualize the largest slice of one image, in each dimension.
+% Visualize imageAD_ROI
+% visualize the largest slice of one image, in each dimension.
 
 figure;
 subplot(2,2,1)
@@ -132,8 +131,8 @@ imagesc(squeeze(imageAD_ROI(3,:,:,3))); colormap gray %la x è fissata, sagittal
 title("Tagliata AD")
 
 
-%Visualize imageCTRL_ROI
-%visualize the largest slice of one image, in each dimension.
+% Visualize imageCTRL_ROI
+% visualize the largest slice of one image, in each dimension.
 
 figure;
 subplot(2,2,1)
@@ -144,9 +143,9 @@ subplot(2,2,4)
 imagesc(squeeze(imageCTRL_ROI(3,:,:,3))); colormap gray %la x è fissata, sagittale
 title("Tagliata CTRL")
 
-%% Create a bounding box of a region without the hyppotalamus
+%% Create a bounding box of a region without the hyppocampus
 
-%Bounging box AD images
+% Bounging box AD images
 
 imageAD_ROI_VOID=[];
 
@@ -163,7 +162,7 @@ for i=1:144  % we consider just cubic ROIs 144
     imageAD_ROI_VOID=cat(4,imageAD_ROI_VOID,ROI_P_VOID);
 end
 
-%Bounging box CTRL images
+% Bounging box CTRL images
 
 imageCTRL_ROI_VOID=[];
 
@@ -180,8 +179,8 @@ for i=1:189  % we  consider just cubic ROIs 189
     imageCTRL_ROI_VOID=cat(4,imageCTRL_ROI_VOID,ROI_P_VOID);
 end
 
-%Visualize imageAD_ROI_VOID
-%visualize the largest slice of one image, in each dimension.
+% Visualize imageAD_ROI_VOID
+% Visualize the largest slice of one image, in each dimension.
 
 figure;
 subplot(2,2,1)
@@ -193,8 +192,8 @@ imagesc(squeeze(imageAD_ROI_VOID(25,:,:,3))); colormap gray %la x è fissata, sa
 title("Tagliata AD TH")
 
 
-%Visualize imageCTRL_ROI_VOID
-%visualize the largest slice of one image, in each dimension.
+% Visualize imageCTRL_ROI_VOID
+% Visualize the largest slice of one image, in each dimension.
 
 figure;
 subplot(2,2,1)
@@ -207,7 +206,7 @@ title("Tagliata CTRL TH")
 
 %% Create a bounding box for the hyppocampus
 
-%Bounging box AD images
+% Bounding box AD images
 
 imageAD_ROI_TH=[];
 
@@ -224,7 +223,7 @@ for i=1:144  % we consider just cubic ROIs 144
     imageAD_ROI_TH=cat(4,imageAD_ROI_TH,ROI_P_TH);
 end
 
-%Bounging box CTRL images
+% Bounding box CTRL images
 
 imageCTRL_ROI_TH=[];
 
@@ -241,8 +240,8 @@ for i=1:189  % we  consider just cubic ROIs 189
     imageCTRL_ROI_TH=cat(4,imageCTRL_ROI_TH,ROI_P_TH);
 end
 
-%Visualize imageAD_ROI_TH
-%visualize the largest slice of one image, in each dimension.
+% Visualize imageAD_ROI_TH
+% Visualize the largest slice of one image, in each dimension.
 
 figure;
 subplot(2,2,1)
@@ -254,8 +253,8 @@ imagesc(squeeze(imageAD_ROI_TH(25,:,:,3))); colormap gray %la x è fissata, sagi
 title("Tagliata AD TH")
 
 
-%Visualize imageCTRL_ROI_TH
-%visualize the largest slice of one image, in each dimension.
+% Visualize imageCTRL_ROI_TH
+% Visualize the largest slice of one image, in each dimension.
 
 figure;
 subplot(2,2,1)
@@ -267,11 +266,11 @@ imagesc(squeeze(imageCTRL_ROI_TH(25,:,:,3))); colormap gray %la x è fissata, sa
 title("Tagliata CTRL TH")
 
 %% Output 
-%create two folders in 'AD_CTRL/' for each ROI set 
-%Save modified images in NifTi format in the two folders separating AD and
+% Create two folders in 'AD_CTRL/' for each ROI set 
+% Save modified images in NifTi format in the two folders separating AD and
 %CTRL
 
-%Defining the dir and the names of the output files
+% Defining the dir and the names of the output files
 
 fileID='AD_CTRL/AD_CTRL_metadata.csv';
 
@@ -297,7 +296,7 @@ if ~exist(fileOUTpath_CTRL_TH, 'dir')
     mkdir(fileOUTpath_CTRL_TH);
 end
 
-%Saving the AD images
+% Saving the AD images
 
 disp('Writing the output AD files');
 
@@ -312,7 +311,7 @@ end
 
 disp('... done!');
 
-%Saving the CTRL images
+% Saving the CTRL images
 
 disp('Writing the output CTRL files');
 
