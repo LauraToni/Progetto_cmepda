@@ -129,7 +129,7 @@ if __name__=='__main__':
 
     # Build the base model
     base_model.summary()
-    base_model.load_weights('CNN_weights.h5')
+    base_model.load_weights('CNN_weights.h5', by_name=True)
     base_model.trainable = False
 
     # Set the learning Rate
@@ -137,8 +137,9 @@ if __name__=='__main__':
     reduce_Rl=tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=2, verbose=1)
 
     # Create the new model
-    input2 = base_model(training = False)
-    flat2 = tf.keras.layers.Flatten()(max3)
+    input2 = tf.keras.Input(shape=(50, 50, 50, 1))
+    x = base_model(input2, training = False)
+    flat2 = tf.keras.layers.Flatten()(x)
     drop2 = tf.keras.layers.Dropout(0.1)(flat2)
     output2 = tf.keras.layers.Dense(units=1)(drop2)
 
@@ -153,7 +154,7 @@ if __name__=='__main__':
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
     #Fit the data
-    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=True, epochs=1, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
+    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=True, epochs=5, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
 
     #history contains information about the training
     print(history.history.keys())
@@ -169,5 +170,7 @@ if __name__=='__main__':
         ax[i].set_ylabel(metric)
         ax[i].legend(["train", "val"])
 
+    plt.show()
+
     #Display ROC curve and calculate AUC
-    auc = roc_curve(X_test, Y_test, model)
+    #auc = roc_curve(X_test, Y_test, model)
