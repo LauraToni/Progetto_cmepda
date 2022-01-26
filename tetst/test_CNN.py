@@ -24,8 +24,8 @@ class TestCNN(unittest.TestCase):
         """
         Set up the test
         """
-        self.NAD=144
-        self.NCTRL=189
+        self.NAD=5
+        self.NCTRL=5
         self.dataset_path_AD_ROI = "AD_CTRL/AD_ROIL"
         self.dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROIL"
         self.dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
