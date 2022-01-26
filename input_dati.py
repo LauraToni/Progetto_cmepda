@@ -170,4 +170,4 @@ if __name__=='__main__':
 
 
     # import images, labels, file names, age and mmse
-    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age, file_mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='_')
+    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age, file_mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI, dict_age, dict_mmse , str_1='1', str_2='_')
