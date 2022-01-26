@@ -151,8 +151,8 @@ imageAD_ROI_VOID=[];
 
 for i=1:144  % we consider just cubic ROIs 144
     disp(i)
-    P1av=55;
-    P1bv=105;
+    P1av=35;
+    P1bv=85;
     P2av=85;
     P2bv=135;
     P3av=55;
@@ -168,8 +168,8 @@ imageCTRL_ROI_VOID=[];
 
 for i=1:189  % we  consider just cubic ROIs 189
     disp(i)
-    P1av=55; %7
-    P1bv=105; %114
+    P1av=35; %7
+    P1bv=85; %114
     P2av=85; %6
     P2bv=135; %140
     P3av=55; %1
@@ -214,8 +214,8 @@ for i=1:144  % we consider just cubic ROIs 144
     disp(i)
     P1at=35;
     P1bt=85;
-    P2at=58;
-    P2bt=108;
+    P2at=50;
+    P2bt=100;
     P3at=25;
     P3bt=75;
     ROI_P_TH=imageAD(P1at:P1bt,P2at:P2bt,P3at:P3bt,i);
@@ -229,12 +229,12 @@ imageCTRL_ROI_TH=[];
 
 for i=1:189  % we  consider just cubic ROIs 189
     disp(i)
-    P1at=35; %7
-    P1bt=85; %114
-    P2at=58; %6
-    P2bt=108; %140
-    P3at=25; %1
-    P3bt=75; %109
+    P1at=35; 
+    P1bt=85; 
+    P2at=50; %58
+    P2bt=100; %108
+    P3at=25; 
+    P3bt=75; 
     ROI_P_TH=imageCTRL(P1at:P1bt,P2at:P2bt,P3at:P3bt,i);
     ROI_P_TH=squeeze(ROI_P_TH);
     imageCTRL_ROI_TH=cat(4,imageCTRL_ROI_TH,ROI_P_TH);
@@ -351,7 +351,7 @@ imageAD_RECH(P1bt,P2bt,P3at:P3bt)=maximum;
 
 figure;
 subplot(2,2,1)
-imagesc(squeeze(imageAD_RECH(:,:,P3at))); colormap gray %la z è fissata, trasversale
+imagesc(squeeze(imageAD_RECH(:,:,P3bt))); colormap gray %la z è fissata, trasversale
 subplot(2,2,3)
 imagesc(squeeze(imageAD_RECH(:,P2at,:))); colormap gray %la y è fissata, coronale
 subplot(2,2,4)
