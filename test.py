@@ -29,8 +29,8 @@ class TestCNN(unittest.TestCase):
         self.dataset_path_AD_ROI = "AD_CTRL/AD_ROIL"
         self.dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROIL"
         self.dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
-        _, _, self.dic = import_csv(self.dataset_path_metadata)
-        self.x, self.y, self.fnames_AD, self.fnames_CTRL, self.file_id, self.age =read_dataset(self.dataset_path_AD_ROI, self.dataset_path_CTRL_ROI, self.dic)
+        _, _, self.dica , self.dicm = import_csv(self.dataset_path_metadata)
+        self.x, self.y, self.fnames_AD, self.fnames_CTRL, self.file_id, self.age, self.mmse =read_dataset(self.dataset_path_AD_ROI, self.dataset_path_CTRL_ROI, self.dica, self.dicm, str_1='1', str_2='_')
         self.volume = VolumeAugmentation(self.x, self.y, shape=(self.x))
 
     def test_shape(self):
@@ -42,10 +42,10 @@ class TestCNN(unittest.TestCase):
         self.assertEqual( len(self.fnames_AD), self.NAD)
         self.assertEqual( len(self.fnames_CTRL), self.NCTRL)
         self.assertEqual( len(self.file_id), len(self.age))
-
+        self.assertEqual( len(self.file_id), len(self.mmse))
 
     def test_metadata(self):
-        df, head = import_csv(self.dataset_path_metadata)
+        df, head,_ ,_ = import_csv(self.dataset_path_metadata)
         #count the entries grouped by the diagnostic group
         print(df.groupby('DXGROUP')['ID'].count())
 
