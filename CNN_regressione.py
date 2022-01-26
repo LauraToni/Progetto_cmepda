@@ -65,7 +65,7 @@ def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
     lbs_tot=np.append(lbs, lbs_aug, axis=0)
     return img_tot, lbs_tot
 
-def inner_model(width=128, height=128, depth=64):
+def inner_model(width=50, height=50, depth=50):
     """
     Built a 3D CNN model.
     Parameters
@@ -84,35 +84,30 @@ def inner_model(width=128, height=128, depth=64):
 
     """
 
-    inputs = tf.keras.Input((width, height, depth, 1))
+    input1 = tf.keras.Input((width, height, depth, 1))
 
-    x = tf.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu",kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(inputs)
-    x= tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(x)
-    x = tf.keras.layers.BatchNormalization(axis=2)(x)
-    x= tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
+    conv1 = tf.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu",kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(input1)
+    relu1 = tf.keras.layers.ReLU()(conv1)
+    conv2 = tf.keras.layers.Conv3D(filters=32, kernel_size=3, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(relu1)
+    bat1 = tf.keras.layers.BatchNormalization(axis=2)(conv2)
+    relu2= tf.keras.layers.ReLU()(bat1)
+    max1 = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(relu2)
 
-    x = tf.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(x)
-    x= tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(x)
-    x = tf.keras.layers.BatchNormalization(axis=2)(x)
-    x= tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
+    conv3 = tf.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(max1)
+    relu3= tf.keras.layers.ReLU()(conv3)
+    conv4 = tf.keras.layers.Conv3D(filters=64, kernel_size=3, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(relu3)
+    bat2 = tf.keras.layers.BatchNormalization(axis=2)(conv4)
+    relu4= tf.keras.layers.ReLU()(bat2)
+    max2 = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(relu4)
 
-    x = tf.keras.layers.Conv3D(filters=128, kernel_size=3, activation="relu",kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(x)
-    x = tf.keras.layers.BatchNormalization(axis=2)(x)
-    x= tf.keras.layers.ReLU()(x)
-    outputs = tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(x)
-
-    #x = tf.keras.layers.Flatten()(x)
-    #x = tf.keras.layers.Dropout(0.1)(x)
-    #outputs = tf.keras.layers.Dense(units=1, activation="sigmoid")(x)
+    conv5 = tf.keras.layers.Conv3D(filters=128, kernel_size=3, activation="relu",kernel_regularizer=tf.keras.regularizers.l2(l2=1e-3))(max2)
+    bat3 = tf.keras.layers.BatchNormalization(axis=2)(conv5)
+    relu5= tf.keras.layers.ReLU()(bat3)
+    max3= tf.keras.layers.MaxPool3D(pool_size=2,  strides=2)(relu5)
 
     # Define the model.
-    model = tf.keras.Model(inputs, outputs, name="3dcnn")
-    return model
-
+    model = tf.keras.Model(input1, max3, name="3dcnn")
+    return max3
 
 if __name__=='__main__':
     dataset_path_AD_ROI = "AD_CTRL/AD_s3"
@@ -151,13 +146,19 @@ if __name__=='__main__':
     X_test = tf.expand_dims(X_test, axis=-1)
 
     # Build the base model
-    base_model = tf.keras.models.load_model("3d_image_classification.h5")
-    model.summary()
+    base_model = inner_model()
+    base_model.summary()
+    base_model.load_weights('CNN_weights.h5')
+    base_model.trainable = False
 
     # Set the learning Rate
     initial_learning_rate = 0.001
     reduce_Rl=tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=2, verbose=1)
 
+    input2 = base_model(training = False)
+    flat2 = tf.keras.layers.Flatten()(input2)
+    drop2 = tf.keras.layers.Dropout(0.1)(flat2)
+    output2 = tf.keras.layers.Dense(units=1)(drop2)
 
     # Compile the model
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=initial_learning_rate), loss='binary_crossentropy', metrics=['MAE'])
