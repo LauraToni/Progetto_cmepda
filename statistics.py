@@ -1,29 +1,18 @@
-import os
-import PIL
-import zipfile
-from PIL import Image
+""" Statistics analysis """
 import pandas as pd
 import matplotlib.pyplot as plt
-from glob import glob
-import math
 import numpy as np
-import matplotlib.pyplot as plt
-from skimage.io import imread
-from sklearn.model_selection import train_test_split, StratifiedKFold
+#from numpy import interp
 import tensorflow as tf
+import seaborn as sns
 from sklearn import metrics
 from sklearn.metrics import roc_curve, auc
-import numpy as np
-from numpy import interp
-from sklearn.preprocessing import RobustScaler, StandardScaler
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.pipeline import Pipeline
-try:
-    import nibabel as nib
-except:
-    raise ImportError('Install NIBABEL')
+from input_dati import read_dataset, import_csv
 
-from data_augmentation import VolumeAugmentation
-from input_dati import cut_file_name, read_dataset, import_csv
+#pylint: disable=invalid-name
+#pylint: disable=line-too-long
 
 def normalize(x):
     """
@@ -135,7 +124,7 @@ def plot_cv_roc(X, y, classifier, n_splits=5, scaler=None):
         y_score = model.predict(X[test])
         fpr, tpr, thresholds = metrics.roc_curve(y[test], y_score)
         #print(f"{fpr} - {tpr} - {thresholds}\n")
-        interp_tpr = interp(interp_fpr, fpr, tpr)
+        interp_tpr = np.interp(interp_fpr, fpr, tpr)
         tprs.append(interp_tpr)
         roc_auc = metrics.auc(fpr, tpr)
         #roc_auc = metrics.roc_auc_score(y[test], y_score)
@@ -210,14 +199,13 @@ def dataframe_test(xtest,ytest, fileAge, fileMMSE):
 
     y_Conf = np.empty(shape=len(Y_test), dtype=int)
     for i in range(0, len(y_conf)):
-        if y_conf[i]==True:
+        if y_conf[i] is True:
             y_Conf[i]=1
-        if y_conf[i]==False:
+        if y_conf[i] is False:
             y_Conf[i]=0
 
     file_mmse=np.array(fileMMSE)
-    file_age=np.array(fileAgE)
-
+    file_age=np.array(fileAge)
     file_mmse_train, file_mmse_test, file_age_train, file_age_test = train_test_split(file_mmse, file_age, test_size=0.1, random_state=11)
 
     d = {'labels_test': Y_test, 'confront_prediction': y_Conf, 'Age_test' : file_age_test, 'Age_pred' : age_pred, 'MMSE_test' : file_mmse_test, 'MMSE_pred' : mmse_pred }
@@ -316,25 +304,25 @@ def permutation(df, Nperm, feature='Age_test'):
 
     return p_value
 
-    def scatter_plot(data_frame):
-        """"
-        Display scatter plots of age and MMSE
-        :Parameters:
-            data_frame : Pandas DataFrame
-                DataFrame containing test images features
-        :Returns:
-            None
-        """
-        color = df.labels_test.apply(lambda x:'blue' if x == 0 else 'red')
-        plt.figure()
-        #in blu quelli controllo e in rosso quelli AD
-        ax = data_frame.plot(x='Age_pred', y='Age_test', kind='scatter', color=color);
-        ax.grid()
-        plt.show()
-        plt.figure()
-        ax = data_frame.plot(x='MMSE_pred', y='MMSE_test', kind='scatter', color=color);
-        ax.grid()
-        plt.show()
+def scatter_plot(data_frame):
+    """
+    Display scatter plots of age and MMSE
+    :Parameters:
+        data_frame : Pandas DataFrame
+            DataFrame containing test images features
+    :Returns:
+        None
+    """
+    color = df.labels_test.apply(lambda x:'blue' if x == 0 else 'red')
+    plt.figure()
+    #in blu quelli controllo e in rosso quelli AD
+    ax = data_frame.plot(x='Age_pred', y='Age_test', kind='scatter', color=color);
+    ax.grid()
+    plt.show()
+    plt.figure()
+    ax = data_frame.plot(x='MMSE_pred', y='MMSE_test', kind='scatter', color=color);
+    ax.grid()
+    plt.show()
 
 if __name__=='__main__':
 
@@ -358,7 +346,6 @@ if __name__=='__main__':
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=11)
     print(f'X train shape: {X_train.shape}, X test shape: {X_test.shape}')
     print(f'Y train shape: {Y_train.shape}, Y test shape: {Y_test.shape}')
-
 
     model = tf.keras.models.load_model("3d_image_classification.h5")
     model.summary()
