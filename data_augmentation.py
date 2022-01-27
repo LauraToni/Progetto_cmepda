@@ -1,16 +1,12 @@
 """
-The VolumeAugmentation class shuffles the dataset and rotates the volume by an angle randomly chosen.
+The VolumeAugmentation class shuffles the dataset
+and rotates the volume by an angle randomly chosen.
 """
 import random
 from sklearn.utils import shuffle
 import numpy as np
 import tensorflow as tf
 from scipy import ndimage
-
-try:
-    import zipfile
-except:
-    raise ImportError('Install zipfile')
 
 #pylint: disable=invalid-name
 
