@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage.io import imread
 from sklearn.model_selection import train_test_split, StratifiedKFold
-import tensorflow
+import tensorflow as tf
 from sklearn import metrics
 from sklearn.metrics import roc_curve, auc
 import numpy as np
@@ -198,8 +198,10 @@ def dataframe_test(xtest,ytest, fileAge, fileMMSE):
             dataframe contaning the feature of test images belongig to CTRL category
     '''
 
-    X_test = tensorflow.expand_dims(xtest, axis=-1)
+    X_test = tf.expand_dims(xtest, axis=-1)
     y_pred_test = model.predict(X_test)
+    age_pred = age_model.predict(X_test)
+    mmse_pred = mmse_model.predict(X_test)
 
     y_conf = np.empty(shape=len(Y_test), dtype=bool)
 
@@ -218,7 +220,7 @@ def dataframe_test(xtest,ytest, fileAge, fileMMSE):
 
     file_mmse_train, file_mmse_test, file_age_train, file_age_test = train_test_split(file_mmse, file_age, test_size=0.1, random_state=11)
 
-    d = {'labels_test': Y_test, 'confront_prediction': y_Conf, 'Age_test' : file_age_test, 'MMSE_test' : file_mmse_test }
+    d = {'labels_test': Y_test, 'confront_prediction': y_Conf, 'Age_test' : file_age_test, 'Age_pred' : age_pred, 'MMSE_test' : file_mmse_test, 'MMSE_pred' : mmse_pred }
     dataFrame = pd.DataFrame(data=d)
     dataFrame_AD = dataFrame[dataFrame.labels_test == 1]
     dataFrame_CTRL = dataFrame[dataFrame.labels_test == 0]
@@ -314,6 +316,26 @@ def permutation(df, Nperm, feature='Age_test'):
 
     return p_value
 
+    def scatter_plot(data_frame):
+        """"
+        Display scatter plots of age and MMSE
+        :Parameters:
+            data_frame : Pandas DataFrame
+                DataFrame containing test images features
+        :Returns:
+            None
+        """
+        color = df.labels_test.apply(lambda x:'blue' if x == 0 else 'red')
+        plt.figure()
+        #in blu quelli controllo e in rosso quelli AD
+        ax = data_frame.plot(x='Age_pred', y='Age_test', kind='scatter', color=color);
+        ax.grid()
+        plt.show()
+        plt.figure()
+        ax = data_frame.plot(x='MMSE_pred', y='MMSE_test', kind='scatter', color=color);
+        ax.grid()
+        plt.show()
+
 if __name__=='__main__':
 
     dataset_path_AD_ROI = "AD_CTRL/AD_s3"
@@ -338,8 +360,14 @@ if __name__=='__main__':
     print(f'Y train shape: {Y_train.shape}, Y test shape: {Y_test.shape}')
 
 
-    model = tensorflow.keras.models.load_model("3d_image_classification.h5")
+    model = tf.keras.models.load_model("3d_image_classification.h5")
     model.summary()
+
+    age_model = tf.keras.models.load_model("3d_age_regression.h5")
+    age_model.summary()
+
+    mmse_model = tf.keras.models.load_model("3d_mmse_regression.h5")
+    mmse_model.summary()
 
     auc = roc_curve(X_test, Y_test, model)
 
@@ -382,3 +410,4 @@ if __name__=='__main__':
     correlation(df, df_AD, df_CTRL)
     permutation(df, Nperm=1000, feature='Age_test')
     permutation(df, Nperm=1000, feature='MMSE_test')
+    scatter_plot(df)

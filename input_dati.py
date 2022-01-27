@@ -1,27 +1,29 @@
+""" This document contains the functions to import metadata
+from a csv file and load images from a NifTi directory.
+It also arranges images and labels. """
 import os
 from glob import glob
-import math
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-from skimage.io import imread
-from sklearn.model_selection import train_test_split
-from sklearn import metrics
 try:
     import nibabel as nib
 except:
     raise ImportError('Install NIBABEL')
-from nibabel.testing import data_path
 
-from data_augmentation import VolumeAugmentation
-
-#os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 #pylint: disable=invalid-name
 #pylint: disable=line-too-long
 
 def cut_file_name (file_name, str_1, str_2):
     """
-    Cut the name of the NIFTY file to create a string that identify the image easily.
+    Cut the name of the NifTi file to create a string that identify the image easily.
+
+    :Parameters:
+        file_name : list of str
+            List of str containing file names from csv
+        str_1 : str
+            Identification string used in the first cut
+        str_2 : str
+            Identification string used in the second cut
     """
     # First cut
     pos_1 = file_name.index(str_1)
@@ -49,9 +51,9 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv_age, dic_csv_mmse, 
             Identification char used to cut the names in the right position.
         str_2 : char
             Identification char used to cut the names in the right position.
-        x_id: str
+        x_id : str
             Identification string in the filename of AD images
-        y_id: str
+        y_id : str
             Identification string in the filename of CTRL images
 
     :Returns:
@@ -59,15 +61,15 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv_age, dic_csv_mmse, 
             Array of AD and CTRL images data
         Y: np.array
             Array of labels
-        file_names_AD: list (?)
+        file_names_AD: list of str
             List containig AD images file names
-        file_names_CTRL: list (?)
+        file_names_CTRL: list of str
             List containig CTRL images file names
-        id : list of str
+        id_list : list of str
             List containing the names of the images arranged as the csv
-        file_age : list of str
+        file_Age : list of str
             List containing the age of the patients arranged as the csv
-        file_mmse : list of str
+        file_Mmse : list of str
             List containing the mmse of the patients arranged as the csv
     """
 
@@ -75,45 +77,45 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv_age, dic_csv_mmse, 
     file_names_CTRL= sorted(glob(os.path.join(dataset_path_CTRL, f"*{y_id}*.nii"  )))
 
     # Define support lists
-    X = []
-    Y = []
-    id = []
-    file_age = []
-    file_mmse = []
+    X_list = []
+    Y_list = []
+    id_list = []
+    file_Age = []
+    file_Mmse = []
     i=1
 
     for fname_AD in file_names_AD:
-        X.append(nib.load(fname_AD).get_fdata())
-        Y.append(1)
+        X_list.append(nib.load(fname_AD).get_fdata())
+        Y_list.append(1)
 
         # Cut AD filenames
         name = cut_file_name(fname_AD, str_1, str_2)
 
         # Fill lists
-        id.append(name)
-        file_age.append(dic_csv_age[name])
-        file_mmse.append(dic_csv_mmse[name])
+        id_list.append(name)
+        file_Age.append(dic_csv_age[name])
+        file_Mmse.append(dic_csv_mmse[name])
 
         # Load AD images
         print(f'Caricamento immagine {name} ({i} di 144)')
         i+=1
     i=1
     for fname_CTRL in file_names_CTRL:
-        X.append(nib.load(fname_CTRL).get_fdata())
-        Y.append(0)
+        X_list.append(nib.load(fname_CTRL).get_fdata())
+        Y_list.append(0)
 
         # Cut CTRL filenames
         name = cut_file_name(fname_CTRL, str_1, str_2)
 
         # Fill lists
-        id.append(name)
-        file_age.append(dic_csv_age[name])
-        file_mmse.append(dic_csv_mmse[name])
+        id_list.append(name)
+        file_Age.append(dic_csv_age[name])
+        file_Mmse.append(dic_csv_mmse[name])
 
         # Load CTRL images
         print(f'Caricamento immagine {name} ({i} di 189)')
         i+=1
-    return np.array(X), np.array(Y), file_names_AD, file_names_CTRL, id, file_age, file_mmse
+    return np.array(X_list), np.array(Y_list), file_names_AD, file_names_CTRL, id_list, file_Age, file_Mmse
 
 def import_csv(path):
     """
@@ -158,6 +160,7 @@ def import_csv(path):
     return df, head, dic_age, dic_mmse
 
 if __name__=='__main__':
+
     # Define the dataset path
     dataset_path_AD_ROI = "AD_CTRL/AD_ROI"
     dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI"

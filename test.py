@@ -12,7 +12,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage.io import imread
 from sklearn.model_selection import train_test_split
-os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 
 from data_augmentation import VolumeAugmentation
 
