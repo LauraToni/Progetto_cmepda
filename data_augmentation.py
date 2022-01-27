@@ -1,5 +1,5 @@
 """
-The VolumeAugmentation class shuffles the dataset and rotates the volume by an angle randomly chosen
+The VolumeAugmentation class shuffles the dataset and rotates the volume by an angle randomly chosen.
 """
 import random
 from sklearn.utils import shuffle
@@ -15,21 +15,28 @@ except:
 #pylint: disable=invalid-name
 
 class VolumeAugmentation():
-    """ Data augmentation class """
+    """ Compute data augmentation by rotating the volume.
+
+    :Attributes:
+        x : np.array
+            Array containing 3D images
+        y : np.array
+            Array containing labels
+        shape : tuple
+            Image shape
+
+    :Methods:
+        shuffle_dataset :
+            Shuffle the dataset
+        augment :
+            Create two arrays cointaing rotated images and labels
+        rotate :
+            Define some rotation angles and rotate the volume by a few degrees
+    """
 
     def __init__(self, x, y, shape):
         """
-        Initialize the class
-
-        Parameters
-        ----------
-        x : np.array
-            array containing 3D images
-        y : np.array
-            array containing labels
-        shape : tuple
-            image shape
-
+        Initialize the class.
         """
         self.x, self.y = x, y
         self.shape = shape
@@ -40,19 +47,16 @@ class VolumeAugmentation():
 
     def augment(self):
         """
-        Create two arrays cointaing rotated images and labels
+        Create two arrays cointaing rotated images and labels.
 
-        Parameters
-        ----------
-        None
+        :Parameters:
+            None
 
-        Returns
-        -------
-        X : 3D np.array
-            array containig 3D images
-        Y : np.array
-            array containing labels
-
+        :Returns:
+            X : 3D np.array
+                Array containig 3D images
+            Y : np.array
+                Array containing labels
         """
         X=[]
         Y=[]
@@ -65,34 +69,17 @@ class VolumeAugmentation():
 
     def rotate(self, volume):
         """
-        Rotate the volume by a few degrees
+        Define some rotation angles and rotate the volume by a few degrees.
 
-        Parameters
-        ----------
-        volume : 3D image
-            image that you want to rotate
+        :Parameters:
+            volume : 3D image
+                Image that you want to rotate
 
-        Returns
-        -------
-        augmented_volume : 3D image
-            rotated image
-
+        :Returns:
+            augmented_volume : 3D image
+                Rotated image
         """
         def scipy_rotate(volume):
-            """
-            Define some rotation angles and rotate the volume
-
-            Parameters
-            ----------
-            volume : 3D image
-                image that you want to rotate
-
-            Returns
-            -------
-            volume : 3D image
-                rotated image
-
-            """
             # define some rotation angles
             angles = [-20, -10, -5, 5, 10, 20]
             # pick angles at random
