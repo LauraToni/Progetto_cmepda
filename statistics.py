@@ -28,14 +28,12 @@ from input_dati import cut_file_name, read_dataset, import_csv
 def normalize(x):
     """
     Normalize the intensity of every pixel in the image
-    Parameters
-    ----------
-    x : 4D np.array
-        array containing the images
-    Returns
-    -------
-    x : 4D np.array
-        array containg the normalized images
+    :Parameters:
+        x : 4D np.array
+            array containing the images
+    :Returns:
+        x : 4D np.array
+            array containg the normalized images
 
     """
     return x/x.max()
@@ -43,16 +41,14 @@ def normalize(x):
 def dice(pred, true, k = 1):
     """
     Calculate Dice index for a single image
-    Parameters
-    ----------
-    pred: float
-        the prediction of the CNN
-    true: int
-        the label of the image
-    Returns
-    -------
-    dice: float
-        Dice index for the image
+    :Parameters:
+        pred: float
+            the prediction of the CNN
+        true: int
+            the label of the image
+    :Returns:
+        dice: float
+            Dice index for the image
     """
     intersection = np.sum(pred[true==k]) * 2.0
     dice_coef = intersection / (np.sum(pred) + np.sum(true))
@@ -79,16 +75,14 @@ def dice_vectorized(pred, true, k = 1):
 def roc_curve(xtest, ytest, model):
     """
     Display ROC curve and calculate AUC
-    Parameters
-    ----------
-    xtest: 4D np.array
-        array containg test images
-    ytest: 2D np.array
-        array containing test labels
-    Returns
-    -------
-    auc: float
-        area under the ROC curve
+    :Parameters:
+        xtest: 4D np.array
+            array containg test images
+        ytest: 2D np.array
+            array containing test labels
+    :Returns:
+        auc: float
+            area under the ROC curve
     """
     y_score = model.predict(xtest)
     fpr, tpr, thresholds = metrics.roc_curve(ytest, y_score)
@@ -186,24 +180,22 @@ def dataframe_test(xtest,ytest, fileAge, fileMMSE):
     Create the dataframes containig labels, age, MMSE and a confront_prediction
     for test's images. confront_prediction is an array that is 1 if the prediction
     of the model is correct and 0 if it is wrong.
-    Parameters
-    ----------
-    xtest : 4D array
-        array containg the test's images
-    ytest : 1D array
-        array containg the labels of test's images
-    fileAge : Tupla
-        Tupla containing the age relative to test's images
-    fileMMSE : Tupla
-        Tupla containg the MMSE relative to test's images
-    Returns
-    -------
-    dataFrame : pandas dataframe
-        dataframe contining the feautures of all test's images
-    dataFrame_AD : pandas dataframe
-        dataframe contaning the features of test images belongig to AD category
-    dataFrame_CTRL :
-        dataframe contaning the feature of test images belongig to CTRL category
+    :Parameters:
+        xtest : 4D array
+            array containg the test's images
+        ytest : 1D array
+            array containg the labels of test's images
+        fileAge : Tupla
+            Tupla containing the age relative to test's images
+        fileMMSE : Tupla
+            Tupla containg the MMSE relative to test's images
+    :Returns:
+        dataFrame : pandas dataframe
+            dataframe contining the feautures of all test's images
+        dataFrame_AD : pandas dataframe
+            dataframe contaning the features of test images belongig to AD category
+        dataFrame_CTRL :
+            dataframe contaning the feature of test images belongig to CTRL category
     '''
 
     X_test = tensorflow.expand_dims(xtest, axis=-1)
@@ -237,17 +229,15 @@ def correlation(df, dfAD, dfCTRL):
     '''
     Calculate correlationd between features in dataframes containing the features
     of the test images and their predicted category.
-    Parameters
-    ----------
-    df : pandad dataframe
-        dataframe containing the features of all the test images
-    dfAD : pandad dataframe
+    :Parameters:
+        df : pandad dataframe
+            dataframe containing the features of all the test images
+        dfAD : pandad dataframe
             dataframe containing the features of the test images belongig to AD category
-    dfCTRL: pandad dataframe
+        dfCTRL: pandad dataframe
             dataframe containing the features of the test images belongig to CTRL category
-    Returns
-    -------
-    None
+    :Returns:
+        None
     '''
     #correlazione con tutti i casi di test, quindi AD e controllo
     print(df.drop('labels_test', axis=1).corr())
@@ -268,19 +258,16 @@ def permutation(df, Nperm, feature='Age_test'):
     The null hypothesis is that the feature mean distribution for image predicted
     correctly and wrongly are the same against the hypothesis that they are diffent.
     The p-value for the null hypothesis is returned.
-    Parameters
-    ----------
-    df : pandas dataframe
-        dataframe containing the features of all the test images
-    Nperm : int
-        number of permutation
-    feature : string
-        name of the feature in the dataset
-    Returns
-    -------
-    p_value : float
-        p_value of the null hypothesis
-
+    :Parameters:
+        df : pandas dataframe
+            dataframe containing the features of all the test images
+        Nperm : int
+            number of permutation
+        feature : string
+            name of the feature in the dataset
+    :Returns:
+        p_value : float
+            p_value of the null hypothesis
     '''
     feature_pred = df[df['Confronto_predizione'] == 1][feature]
     feature_no_pred = df[df['Confronto_predizione'] == 0][feature]
@@ -334,16 +321,17 @@ if __name__=='__main__':
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data
-    df, head, dic_info = import_csv(dataset_path_metadata)
+    df, head, dict_age, dict_mmse = import_csv(dataset_path_metadata)
     features = ['DXGROUP', 'ID', 'AGE', 'MMSE']
     print(df[features])
 
-    # import images, labels and file names
-    X_o, Y, fnames_AD, fnames_CTRL, file_id, file_age, file_mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI, dic_info, str_1='1', str_2='.')
+
+    # import images, labels, file names, age and mmse
+    X_o, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
 
     X_o=normalize(X_o)
 
-    X=X_o[:,36:86,56:106,24:74] #ippocampo
+    X=X_o[:,35:85,50:100,25:75] #ippocampo
 
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=11)
     print(f'X train shape: {X_train.shape}, X test shape: {X_test.shape}')

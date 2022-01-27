@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from CNN import normalize
+from CNN import normalize, stack_train_augmentation
 from input_dati import read_dataset, import_csv
 import string
 import os
@@ -51,14 +51,22 @@ class TestCNN(unittest.TestCase):
 
     def test_max_min (self):
         self.assertEqual( (self.y.max()) , 1)
-        self.assertEqual( (self.y.min()) , 0)
+        self.assertAlmostEqual( (self.y.min()) , 0)
         nx=normalize(self.x)
         self.assertEqual( (nx.max()) , 1)
-        self.assertEqual( (nx.min()) , 0)
+        self.assertAlmostEqual( (nx.min()) , 0)
 
     def test_augmentation(self):
         self.assertEqual( len(self.volume.augment()[1]), len(self.y))
         self.assertEqual( self.volume.augment()[0].shape, self.x.shape)
+
+    def test_stack_augment(self):
+        img_augm = self.volume.augment()[0]
+        lbs_augm = self.volume.augment()[1]
+        img_tot = stack_train_augmentation(self.x, img_augm, self.y, lbs_augm)[0]
+        lbs_tot = stack_train_augmentation(self.x, img_augm, self.y, lbs_augm)[1]
+        self.assertEqual( len(img_tot), 2*len(self.x) )
+        self.assertEqual( len(lbs_tot), 2*len(self.y) )
 
 if __name__=='__main__':
    unittest.main()
