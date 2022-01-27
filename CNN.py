@@ -130,7 +130,7 @@ if __name__=='__main__':
     X_o=normalize(X_o)
 
     # Define ROI
-    X=X_o[:,35:85,50:100,25:75] #ippocampo 56-106
+    X=X_o[:,35:85,50:100,25:75] #ippocampo
     #X=X_o[:,11:109,12:138,24:110] #bordi neri precisi
     #X=X_o[:,20:100,20:130,20:100]
     #X=X_o
@@ -170,9 +170,9 @@ if __name__=='__main__':
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
     #Fit the data
-    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=True, epochs=15, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
+    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=True, epochs=2, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
 
-    model.save_weights('CNN_weights.h5', by_name=True)
+    model.save_weights('CNN_weights.h5')
 
     #history contains information about the training
     print(history.history.keys())

@@ -59,9 +59,9 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv_age, dic_csv_mmse, 
             Array of AD and CTRL images data
         Y: np.array
             Array of labels
-        file_names_AD: list of str
+        file_names_AD: list (?)
             List containig AD images file names
-        file_names_CTRL: list of str
+        file_names_CTRL: list (?)
             List containig CTRL images file names
         id : list of str
             List containing the names of the images arranged as the csv
