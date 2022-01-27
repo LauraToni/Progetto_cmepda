@@ -1,6 +1,3 @@
-""" This document contains the functions to import metadata
-from a csv file and load images from a NifTi directory.
-It also arranges images and labels. """
 import os
 from glob import glob
 import numpy as np
