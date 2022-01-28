@@ -26,6 +26,7 @@ from statistics import roc_curve, plot_cv_roc
 def normalize(x):
     """
     Normalize the intensity of every pixel in the image.
+    
     :Parameters:
         x : 4D np.array
             Array containing the images
@@ -39,6 +40,7 @@ def normalize(x):
 def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
     """
     Creates an array containing both original and augmented images. Does the same with their labels.
+    
     :Parameters:
         img : 4D np.array
             Array containing the images used for the training
@@ -62,6 +64,7 @@ def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
 def inner_model(width=128, height=128, depth=64):
     """
     Built a 3D CNN model.
+    
     :Parameters:
         widht: int
             First image's dimension
