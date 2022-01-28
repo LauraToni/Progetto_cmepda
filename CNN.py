@@ -108,8 +108,8 @@ def inner_model(width=128, height=128, depth=64):
 
 
 if __name__=='__main__':
-    dataset_path_AD_ROI = "AD_CTRL/AD_ROITH"
-    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROITH"
+    dataset_path_AD_ROI = "AD_CTRL/AD_ROI_TH"
+    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI_TH"
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data
@@ -117,11 +117,10 @@ if __name__=='__main__':
     features = ['DXGROUP', 'ID', 'AGE', 'MMSE']
     print(df[features])
 
-
     # import images, labels, file names, age and mmse
-    X_o, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
+    X, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
 
-    X_o=normalize(X_o)
+    X=normalize(X)
 
     # Divide the dataset in train, validation and test in a static way
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=11)
