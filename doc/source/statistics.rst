@@ -1,6 +1,8 @@
 Statitics analysis
 ==================
 
+Statistics analysis to study the results of the neural network.
+
 .. autofunction:: statistics.normalize
 
 .. autofunction:: statistics.dice
