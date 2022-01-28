@@ -360,8 +360,8 @@ def scatter_plot(data_frame):
 
 if __name__=='__main__':
 
-    dataset_path_AD_ROI = "AD_CTRL/AD_s3"
-    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_s3"
+    dataset_path_AD_ROI = "AD_CTRL/AD_ROI_TH"
+    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI_TH"
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data
@@ -370,11 +370,7 @@ if __name__=='__main__':
     print(df[features])
 
     # import images, labels, file names, age and mmse
-    X_o, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
-
-    X_o=normalize(X_o)
-
-    X=X_o[:,35:85,50:100,25:75] #ippocampo
+    X, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
 
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.15, random_state=11)
     _, age_test, _, mmse_test = train_test_split(age, mmse, test_size=0.15, random_state=11)
