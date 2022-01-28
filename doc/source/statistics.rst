@@ -1,5 +1,5 @@
-Statitics analysis for the CNN model
-====================================
+Statitics analysis
+==================
 
 .. autofunction:: statistics.dice
 
