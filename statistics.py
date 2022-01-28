@@ -2,7 +2,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-#from numpy import interp
 import tensorflow as tf
 import seaborn as sns
 from sklearn import metrics
@@ -75,19 +74,23 @@ def roc_curve(xtest, ytest, model):
 
     return auc
 
-def plot_cv_roc(X, y, classifier, n_splits=5, scaler=None):
+def plot_cv_roc(X, y, classifier, n_splits=5):
     """
-    plot_cv_roc trains the classifier on X data with y labels, implements the
-    k-fold-CV with k=n_splits, may implement a feature scaling function.
-    It plots the ROC curves for each k fold and their average and displays
-    the corresponding AUC values and the standard deviation over the k folders.
+    Implement k-fold-CV with k=n_splits, plot the ROC curves for each k fold
+    and their average. It also display the corresponding AUC values and
+    the standard deviation over the k folders.
+    :Parameters:
+        X : 4D np.array
+            Array containing the images
+        y : 1D np.array
+            Array containing labels
+        classifier : Keras.model
+            The CNN model
+        n_splits : int
+            Number of folders. Default=5
     """
-    if scaler:
-        model = Pipeline([('scaler', scaler()),
-                    ('classifier', classifier)])
-    else:
-        model = classifier
 
+    model = classifier
     try:
         y = y.to_numpy()
         X = X.to_numpy()
@@ -150,23 +153,12 @@ def plot_cv_roc(X, y, classifier, n_splits=5, scaler=None):
             indice=j
             k=k+1
         j=j+1
-    '''
 
-    j=0
-    k=0
-    while (k==0):
-        if ((mean_trh[j]> 0.48) and (mean_trh[j] < 0.49)):
-            indice=j
-            k=k+1
-        j=j+1
-    '''
     plt.axvline(interp_fpr[indice], linestyle='--', color='green')
     print(f'La soglia è: {mean_trh[indice]}')
     print(f'FPR: {interp_fpr[indice]}')
     print(f'sensitività: {mean_tpr[indice]}')
     print(f'specificità: {1 - interp_fpr[indice]}')
-
-
 
     std_tpr = np.std(tprs, axis=0)
     tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
@@ -182,44 +174,36 @@ def plot_cv_roc(X, y, classifier, n_splits=5, scaler=None):
     plt.legend(loc="lower right", prop={'size': 15})
     plt.show()
 
-def dataframe_test(xtest,ytest, agetest, mmsetest):
+def dataframe_test(xtest, ytest, agetest, mmsetest):
     '''
-    Create the dataframes containig labels, age, MMSE and a confront_prediction
-    for test's images. confront_prediction is an array that is 1 if the prediction
+    Create the dataframes containig labels, age, MMSE and a Confront_predizione
+    for test's images. Confronto_predizione is an array that is 1 if the prediction
     of the model is correct and 0 if it is wrong.
     :Parameters:
         xtest : 4D array
-            array containg the test's images
+            Array containg the test's images
         ytest : 1D array
-            array containg the labels of test's images
+            Array containg the labels of test's images
         fileAge : Tupla
             Tupla containing the age relative to test's images
         fileMMSE : Tupla
             Tupla containg the MMSE relative to test's images
     :Returns:
         dataFrame : pandas dataframe
-            dataframe contining the feautures of all test's images
+            Dataframe contining the feautures of all test's images
         dataFrame_AD : pandas dataframe
-            dataframe contaning the features of test images belongig to AD category
+            Dataframe contaning the features of test images belongig to AD category
         dataFrame_CTRL :
-            dataframe contaning the feature of test images belongig to CTRL category
+            Dataframe contaning the feature of test images belongig to CTRL category
     '''
 
     X_test = tf.expand_dims(xtest, axis=-1)
     y_pred_test = model.predict(X_test)
     age_pred = age_model.predict(X_test)
     mmse_pred = mmse_model.predict(X_test)
-    #y_pred_test.squeeze()
-    #mmse_pred.squeeze()
-    #age_pred.squeeze()
-    #y_pred_test = y_pred_test[:,0]
-    #age_pred = age_pred[:,0]
-    #mmse_pred = mmse_pred[:,0]
-
     y_pred_test = np.squeeze(y_pred_test)
     age_pred = np.squeeze(age_pred)
     mmse_pred = np.squeeze(mmse_pred)
-
 
     print(f' y test : {np.shape(ytest)}')
     print(f' y pred  : {np.shape(y_pred_test)}')
@@ -238,13 +222,8 @@ def dataframe_test(xtest,ytest, agetest, mmsetest):
         if y_conf[i] == False:
             y_Conf[i]=0
 
-    #file_mmse=np.array(fileMMSE)
-    #file_age=np.array(fileAge)
-    #file_mmse_train, file_mmse_test, file_age_train, file_age_test = train_test_split(file_mmse, file_age, test_size=0.15, random_state=11)
-
     d = {'labels_test': ytest, 'Confronto_predizione': y_Conf, 'Age_test' : agetest, 'Age_pred' : age_pred, 'MMSE_test' : mmsetest, 'MMSE_pred' : mmse_pred }
-    #dataFrame = pd.DataFrame(data=d)
-    #d = {'labels_test': ytest, 'Confronto_predizione': y_Conf, 'Age_test' : agetest, 'MMSE_test' : mmsetest}
+
     dataFrame = pd.DataFrame(data=d)
     dataFrame_AD = dataFrame[dataFrame.labels_test == 1]
     dataFrame_CTRL = dataFrame[dataFrame.labels_test == 0]
@@ -253,15 +232,15 @@ def dataframe_test(xtest,ytest, agetest, mmsetest):
 
 def correlation(df, dfAD, dfCTRL):
     '''
-    Calculate correlationd between features in dataframes containing the features
-    of the test images and their predicted category.
+    Compute correlations between features in dataframes containing the features
+    of test images and their predicted category.
     :Parameters:
-        df : pandad dataframe
-            dataframe containing the features of all the test images
-        dfAD : pandad dataframe
-            dataframe containing the features of the test images belongig to AD category
-        dfCTRL: pandad dataframe
-            dataframe containing the features of the test images belongig to CTRL category
+        df : pandas dataframe
+            Dataframe containing the features of all the test images
+        dfAD : pandas dataframe
+            Dataframe containing the features of the test images belongig to AD category
+        dfCTRL: pandas dataframe
+            Dataframe containing the features of the test images belongig to CTRL category
     :Returns:
         None
     '''
@@ -296,17 +275,17 @@ def correlation(df, dfAD, dfCTRL):
 
 def permutation(df, Nperm, feature='Age_test'):
     '''
-    Calculate the permutation test with the test image features.
-    The null hypothesis is that the feature mean distribution for image predicted
-    correctly and wrongly are the same against the hypothesis that they are diffent.
+    Compute the permutation test with test image features.
+    The null hypothesis is that the mean feature distribution of the correcly predicted images
+    the wrongly predicted ones are the same, against the hypothesis that they are different.
     The p-value for the null hypothesis is returned.
     :Parameters:
         df : pandas dataframe
-            dataframe containing the features of all the test images
+            Dataframe containing the features of all the test images
         Nperm : int
-            number of permutation
+            Number of permutations
         feature : string
-            name of the feature in the dataset
+            Feature labels
     :Returns:
         p_value : float
             p_value of the null hypothesis
@@ -322,8 +301,6 @@ def permutation(df, Nperm, feature='Age_test'):
 
     #Differenza delle età medie dei gruppo predetti correttamente e non correttamente
     feature_diff=np.absolute(feature_pred_mean - feature_no_pred_mean)
-
-
     n_perm = Nperm
     n_examples=df.shape[0]
 
@@ -392,7 +369,6 @@ if __name__=='__main__':
     features = ['DXGROUP', 'ID', 'AGE', 'MMSE']
     print(df[features])
 
-
     # import images, labels, file names, age and mmse
     X_o, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
 
@@ -427,17 +403,12 @@ if __name__=='__main__':
     ypred = model.predict(xtrain).squeeze()>SOGLIA
     ytrue = Y_train.squeeze()
 
-
     dice_value = dice(ypred, ytrue)
     print(f'Indice di DICE:{dice_value}')
 
     #Accuracy
     accuracy = metrics.accuracy_score(ytrue, ypred)
     print(f'Accuracy:{accuracy}')
-
-    '''
-    Funzione per creare il pandas dataframe con le predizioni delle immagini di test
-    '''
 
     df, df_AD, df_CTRL=dataframe_test(X_test, Y_test, age_test, mmse_test)
     print(df.head())
