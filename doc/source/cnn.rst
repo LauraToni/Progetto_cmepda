@@ -1,8 +1,8 @@
-Convolutional neural network for Alzheimer and control
-======================================================
+Convolutional neural network
+============================
 
 .. autofunction:: CNN.normalize
 
 .. autofunction:: CNN.stack_train_augmentation
 
-.. autofunction:: CNN.get_model
+.. autofunction:: CNN.inner_model
