@@ -108,8 +108,8 @@ def inner_model(width=128, height=128, depth=64):
 
 
 if __name__=='__main__':
-    dataset_path_AD_ROI = "AD_CTRL/AD_s3"
-    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_s3"
+    dataset_path_AD_ROI = "AD_CTRL/AD_ROITH"
+    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROITH"
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data
@@ -122,12 +122,6 @@ if __name__=='__main__':
     X_o, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
 
     X_o=normalize(X_o)
-
-    # Define ROI
-    X=X_o[:,35:85,50:100,25:75] #ippocampo
-    #X=X_o[:,11:109,12:138,24:110] #bordi neri precisi
-    #X=X_o[:,20:100,20:130,20:100]
-    #X=X_o
 
     # Divide the dataset in train, validation and test in a static way
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=11)
