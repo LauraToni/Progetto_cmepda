@@ -1,4 +1,8 @@
 import unittest
+import sys
+sys.path.append('../') #use to redirect the path for import my modulue
+#in a different directory
+
 import numpy as np
 from CNN import normalize, stack_train_augmentation
 from input_dati import read_dataset, import_csv
