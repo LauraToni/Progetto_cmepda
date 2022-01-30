@@ -11,9 +11,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage.io import imread
 from sklearn.model_selection import train_test_split
-from Progetto_cmepda.CNN import normalize, stack_train_augmentation
-from Progetto_cmepda.input_dati import read_dataset, import_csv
-from Progetto_cmepda.data_augmentation import VolumeAugmentation
+from CNN import normalize, stack_train_augmentation
+from input_dati import read_dataset, import_csv
+from data_augmentation import VolumeAugmentation
 
 class TestCNN(unittest.TestCase):
     """
