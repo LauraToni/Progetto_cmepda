@@ -21,7 +21,7 @@ and add it to the directory Progetto_cmepda. This dataset contains the segmented
 
 Run the MATLAB code Processing.m to cut the original images into volumes of 50x50x50 containing the hippocampus (saved in AD_ROI_TH and CTRL_ROI_TH) and a region of the brain that doesn't contain it (saved in AD_ROI_VOID and CTRL_ROI_VOID). The following figures show the regions chosen to enclosing the hippocampus and the void region respectively.
 
-<img src="Progetto_cmepda/images/ROI_TH_rettangolo.png" width="425"/>  <img src="Progetto_cmepda/images/ROI_VOID_rettangolo.png" width="425"/>
+<img src="Progetto_cmepda/images/ROI_TH_rettangolo.png" width="300"/>  <img src="Progetto_cmepda/images/ROI_VOID_rettangolo.png" width="300"/>
 
 ### Step 3: CNN model
 
