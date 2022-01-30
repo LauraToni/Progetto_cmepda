@@ -1,12 +1,11 @@
 import unittest
 import sys
+import os
 sys.path.insert(0, os.path.abspath('../'))
-
 import numpy as np
 from CNN import normalize, stack_train_augmentation
 from input_dati import read_dataset, import_csv
 import string
-import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from glob import glob
