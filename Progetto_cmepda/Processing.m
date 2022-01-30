@@ -77,10 +77,13 @@ end
 figure;
 subplot(2,2,1)
 imagesc(squeeze(imageAD(:,:,50,3))); colormap gray %la z è fissata, trasversale
+title(strcat('TRASVERSE view - slice= ', num2str(50)));
 subplot(2,2,3)
 imagesc(squeeze(imageAD(:,72,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('CORONAL view - slice= ', num2str(72)));
 subplot(2,2,4)
 imagesc(squeeze(imageAD(61,:,:,3))); colormap gray %la x è fissata, sagittale
+title(strcat('SAGITTAL view - slice= ', num2str(61)));
 
 %% Create a bounding box
 
@@ -124,11 +127,14 @@ end
 figure;
 subplot(2,2,1)
 imagesc(squeeze(imageAD_ROI(:,:,3,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI AD- TRASVERSE view - slice= ', num2str(3)));
 subplot(2,2,3)
 imagesc(squeeze(imageAD_ROI(:,3,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI AD - CORONAL view - slice= ', num2str(3)));
 subplot(2,2,4)
 imagesc(squeeze(imageAD_ROI(3,:,:,3))); colormap gray %la x è fissata, sagittale
-title("Tagliata AD")
+title(strcat('ROI AD- SAGITTAL view - slice= ', num2str(3)));
+
 
 
 % Visualize imageCTRL_ROI
@@ -137,11 +143,13 @@ title("Tagliata AD")
 figure;
 subplot(2,2,1)
 imagesc(squeeze(imageCTRL_ROI(:,:,3,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI CTRL- TRASVERSE view - slice= ', num2str(3)));
 subplot(2,2,3)
 imagesc(squeeze(imageCTRL_ROI(:,3,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI CTRL- CORONAL view - slice= ', num2str(3)));
 subplot(2,2,4)
 imagesc(squeeze(imageCTRL_ROI(3,:,:,3))); colormap gray %la x è fissata, sagittale
-title("Tagliata CTRL")
+title(strcat('ROI CTRL- SAGITTAL view - slice= ', num2str(3)));
 
 %% Create a bounding box of a region without the hyppocampus
 
@@ -185,11 +193,13 @@ end
 figure;
 subplot(2,2,1)
 imagesc(squeeze(imageAD_ROI_VOID(:,:,25,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI AD VOID - TRASVERSE view - slice= ', num2str(25)));
 subplot(2,2,3)
 imagesc(squeeze(imageAD_ROI_VOID(:,25,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI AD VOID - CORONAL view - slice= ', num2str(25)));
 subplot(2,2,4)
 imagesc(squeeze(imageAD_ROI_VOID(25,:,:,3))); colormap gray %la x è fissata, sagittale
-title("Tagliata AD TH")
+title(strcat('ROI AD VOID - SAGITTAL view - slice= ', num2str(25)));
 
 
 % Visualize imageCTRL_ROI_VOID
@@ -198,11 +208,13 @@ title("Tagliata AD TH")
 figure;
 subplot(2,2,1)
 imagesc(squeeze(imageCTRL_ROI_VOID(:,:,25,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI CTRL VOID - TRASVERSE view - slice= ', num2str(25)));
 subplot(2,2,3)
 imagesc(squeeze(imageCTRL_ROI_VOID(:,25,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI CTRL VOID - CORONAL view - slice= ', num2str(25)));
 subplot(2,2,4)
 imagesc(squeeze(imageCTRL_ROI_VOID(25,:,:,3))); colormap gray %la x è fissata, sagittale
-title("Tagliata CTRL TH")
+title(strcat('ROI CTRL VOID - SAGITTAL view - slice= ', num2str(25)));
 
 %% Create a bounding box for the hyppocampus
 
@@ -246,11 +258,14 @@ end
 figure;
 subplot(2,2,1)
 imagesc(squeeze(imageAD_ROI_TH(:,:,25,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI AD TH - TRASVERSE view - slice= ', num2str(25)));
 subplot(2,2,3)
 imagesc(squeeze(imageAD_ROI_TH(:,25,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI AD TH - CORONAL view - slice= ', num2str(25)));
 subplot(2,2,4)
 imagesc(squeeze(imageAD_ROI_TH(25,:,:,3))); colormap gray %la x è fissata, sagittale
-title("Tagliata AD TH")
+title(strcat('ROI AD TH - SAGITTAL view - slice= ', num2str(25)));
+
 
 
 % Visualize imageCTRL_ROI_TH
@@ -259,11 +274,13 @@ title("Tagliata AD TH")
 figure;
 subplot(2,2,1)
 imagesc(squeeze(imageCTRL_ROI_TH(:,:,25,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI CTRL TH - TRASVERSE view - slice= ', num2str(25)));
 subplot(2,2,3)
 imagesc(squeeze(imageCTRL_ROI_TH(:,25,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI CTRL TH - CORONAL view - slice= ', num2str(25)));
 subplot(2,2,4)
 imagesc(squeeze(imageCTRL_ROI_TH(25,:,:,3))); colormap gray %la x è fissata, sagittale
-title("Tagliata CTRL TH")
+title(strcat('ROI CTRL TH - SAGITTAL view - slice= ', num2str(25)));
 
 %% Output 
 % Create two folders in 'AD_CTRL/' for each ROI set 
@@ -352,11 +369,13 @@ imageAD_RECH(P1bt,P2bt,P3at:P3bt)=maximum;
 figure;
 subplot(2,2,1)
 imagesc(squeeze(imageAD_RECH(:,:,P3bt))); colormap gray %la z è fissata, trasversale
+title(strcat('Hippocampus region - TRASVERSE view - slice= ', num2str(P3at)));
 subplot(2,2,3)
 imagesc(squeeze(imageAD_RECH(:,P2at,:))); colormap gray %la y è fissata, coronale
+title(strcat('Hippocampus region - CORONAL view - slice= ', num2str(P2at)));
 subplot(2,2,4)
 imagesc(squeeze(imageAD_RECH(P1at,:,:))); colormap gray %la x è fissata, sagittale
-title("Rectangle enclosing the hyppocampus region")
+title(strcat('Hippocampus region - SAGITTAL view - slice= ', num2str(P1at)));
 
 %% Display a rectangle enclosing the void region
 
@@ -381,11 +400,13 @@ imageAD_RECV(P1bv,P2av,P3av:P3bv)=maximum;
 imageAD_RECV(P1av,P2bv,P3av:P3bv)=maximum;
 imageAD_RECV(P1bv,P2bv,P3av:P3bv)=maximum;
 
-figure;
+figure
 subplot(2,2,1)
 imagesc(squeeze(imageAD_RECV(:,:,P3av))); colormap gray %la z è fissata, trasversale
+title(strcat('Void region - TRASVERSE view - slice= ', num2str(P3av)));
 subplot(2,2,3)
 imagesc(squeeze(imageAD_RECV(:,P2av,:))); colormap gray %la y è fissata, coronale
+title(strcat('Void region - CORONAL view - slice= ', num2str(P2av)));
 subplot(2,2,4)
 imagesc(squeeze(imageAD_RECV(P1av,:,:))); colormap gray %la x è fissata, sagittale
-title("Rectangle enclosing the void region")
+title(strcat('Void region - SAGITTAL view - slice= ', num2str(P1av)));

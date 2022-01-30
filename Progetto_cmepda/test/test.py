@@ -1,9 +1,9 @@
 import unittest
-import numpy as np
-from CNN import normalize, stack_train_augmentation
-from input_dati import read_dataset, import_csv
-import string
+import sys
+sys.path.insert(0, 'Progetto_cmepda/')
 import os
+import numpy as np
+import string
 import pandas as pd
 import matplotlib.pyplot as plt
 from glob import glob
@@ -12,7 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage.io import imread
 from sklearn.model_selection import train_test_split
-
+from CNN import normalize, stack_train_augmentation
+from input_dati import read_dataset, import_csv
 from data_augmentation import VolumeAugmentation
 
 class TestCNN(unittest.TestCase):
@@ -27,7 +28,7 @@ class TestCNN(unittest.TestCase):
         self.NCTRL=5
         self.dataset_path_AD_ROI = "AD_CTRL/AD_ROI"
         self.dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI"
-        self.dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
+        self.dataset_path_metadata = "../AD_CTRL_metadata_labels.csv"
         _, _, self.dica , self.dicm = import_csv(self.dataset_path_metadata)
         self.x, self.y, self.fnames_AD, self.fnames_CTRL, self.file_id, self.age, self.mmse =read_dataset(self.dataset_path_AD_ROI, self.dataset_path_CTRL_ROI, self.dica, self.dicm, str_1='1', str_2='_')
         self.volume = VolumeAugmentation(self.x, self.y, shape=(self.x))
