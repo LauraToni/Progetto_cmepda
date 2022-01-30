@@ -1,10 +1,7 @@
 import unittest
 import sys
 import os
-sys.path.insert(0, os.path.abspath('../'))
 import numpy as np
-from CNN import normalize, stack_train_augmentation
-from input_dati import read_dataset, import_csv
 import string
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,8 +11,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage.io import imread
 from sklearn.model_selection import train_test_split
-
-from data_augmentation import VolumeAugmentation
+from Progetto_cmepda.CNN import normalize, stack_train_augmentation
+from Progetto_cmepda.input_dati import read_dataset, import_csv
+from Progetto_cmepda.data_augmentation import VolumeAugmentation
 
 class TestCNN(unittest.TestCase):
     """
