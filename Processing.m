@@ -152,11 +152,11 @@ imageAD_ROI_VOID=[];
 for i=1:144  % we consider just cubic ROIs 144
     disp(i)
     P1av=35;
-    P1bv=85;
+    P1bv=84;
     P2av=85;
-    P2bv=135;
+    P2bv=134;
     P3av=55;
-    P3bv=105;
+    P3bv=104;
     ROI_P_VOID=imageAD(P1av:P1bv,P2av:P2bv,P3av:P3bv,i);
     ROI_P_VOID=squeeze(ROI_P_VOID);
     imageAD_ROI_VOID=cat(4,imageAD_ROI_VOID,ROI_P_VOID);
@@ -169,11 +169,11 @@ imageCTRL_ROI_VOID=[];
 for i=1:189  % we  consider just cubic ROIs 189
     disp(i)
     P1av=35; %7
-    P1bv=85; %114
+    P1bv=84; %114
     P2av=85; %6
-    P2bv=135; %140
+    P2bv=134; %140
     P3av=55; %1
-    P3bv=105; %109
+    P3bv=104; %109
     ROI_P_VOID=imageCTRL(P1av:P1bv,P2av:P2bv,P3av:P3bv,i);
     ROI_P_VOID=squeeze(ROI_P_VOID);
     imageCTRL_ROI_VOID=cat(4,imageCTRL_ROI_VOID,ROI_P_VOID);
@@ -212,11 +212,11 @@ imageAD_ROI_TH=[];
 
 for i=1:144  % we consider just cubic ROIs 144
     disp(i)
-    P1at=35;
+    P1at=36;
     P1bt=85;
-    P2at=50;
+    P2at=51;
     P2bt=100;
-    P3at=25;
+    P3at=26;
     P3bt=75;
     ROI_P_TH=imageAD(P1at:P1bt,P2at:P2bt,P3at:P3bt,i);
     ROI_P_TH=squeeze(ROI_P_TH);
@@ -229,11 +229,11 @@ imageCTRL_ROI_TH=[];
 
 for i=1:189  % we  consider just cubic ROIs 189
     disp(i)
-    P1at=35; 
+    P1at=36; 
     P1bt=85; 
-    P2at=50; %58
+    P2at=51; %58
     P2bt=100; %108
-    P3at=25; 
+    P3at=26; 
     P3bt=75; 
     ROI_P_TH=imageCTRL(P1at:P1bt,P2at:P2bt,P3at:P3bt,i);
     ROI_P_TH=squeeze(ROI_P_TH);
