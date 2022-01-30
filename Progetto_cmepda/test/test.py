@@ -1,7 +1,6 @@
 import unittest
 import sys
-sys.path.append('../') #use to redirect the path for import my modulue
-#in a different directory
+sys.path.insert(0, os.path.abspath('../'))
 
 import numpy as np
 from CNN import normalize, stack_train_augmentation
