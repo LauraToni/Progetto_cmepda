@@ -8,3 +8,4 @@ tensorflow
 nibabel
 seaborn
 scipy
+os
