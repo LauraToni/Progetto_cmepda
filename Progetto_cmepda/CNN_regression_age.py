@@ -1,5 +1,5 @@
 """ Convolutional neural network applied to neurological AD and CTRL images
-to predict Age/MMSE with trasfer learning"""
+to predict Age with trasfer learning"""
 import os
 from glob import glob
 import math
@@ -16,6 +16,7 @@ except:
     raise ImportError('Install NIBABEL')
 
 from data_augmentation import VolumeAugmentation
+from CNN import normalize, stack_train_augmentation
 from input_dati import read_dataset,import_csv, cut_file_name
 from statistics import roc_curve, plot_cv_roc
 
@@ -23,47 +24,6 @@ from statistics import roc_curve, plot_cv_roc
 #os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 #pylint: disable=invalid-name
 #pylint: disable=line-too-long
-
-def normalize(x):
-    """
-    Normalize the intensity of every pixel in the image
-    Parameters
-    ----------
-    x : 4D np.array
-        array containing the images
-    Returns
-    -------
-    x : 4D np.array
-        array containg the normalized images
-
-    """
-    return x/x.max()
-
-def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
-    """
-    Creates an array containing both original and augmented images. Does the same with their labels
-    Parameters
-    ----------
-    img : 4D np.array
-        array containing the images used for the training
-
-    img_aug: 4D np.array
-        array containing the augmented images used for the training
-    lbs: np.array
-        array containing the original image labels
-    lbs_aug: np.array
-        array containing the augmented image labels
-    Returns
-    -------
-    img_tot : np.array
-        array cointaing both original and augmented images
-    lbs_tot : np.array
-        array containing original and augmented image labels
-
-    """
-    img_tot=np.append(img, img_aug, axis=0)
-    lbs_tot=np.append(lbs, lbs_aug, axis=0)
-    return img_tot, lbs_tot
 
 if __name__=='__main__':
     dataset_path_AD_ROI = "AD_CTRL/AD_s3"
