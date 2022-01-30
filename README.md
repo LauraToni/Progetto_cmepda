@@ -26,19 +26,24 @@ Run the MATLAB code Processing.m to cut the original images into volumes of 50x5
 ### Step 3: CNN model
 
 Run the Python code CNN.py to create and train the convolutional neural network on the images in AD_ROI_TH/ and CTRL_ROI_TH/. The model will be saved in the file 3d_CNN_15_50_100_Hipp.h5 and the wheights will be saved in CNN_weights_15_50_100.h5. The loss and the ROC will be displayed at the end of the train.
-<img src="Progetto_cmepda/images/loss_15_50_100.png" width="300"/>   
+
+<img src="Progetto_cmepda/images/loss_15_50_100.png" width="450"/>   
 
 
 ### Step 4: Transfer learning to predict mmse and age
 
 Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfer learning and use the pre-trained CNN layers to predict the age and the mmse. The loss of the regression model will be displayed at the end of the train. 
+
 <img src="Progetto_cmepda/images/loss_mmse_regression.png" width="300"/> <img src="Progetto_cmepda/images/loss_mmse_regression_tuning.png" width="300"/>  
 
 ### Step 5: Statistics analysis
 
 Run the Python code statistics.py to study the previous results. For the classofication problem it displays the cross validation k-folding ROC and the correlation between features such as age and mmse. 
+
 <img src="Progetto_cmepda/images/loss_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total.png" width="300"/>  
+
 For the transfer learning problem this codes also shows the scatter plots and the permutation test on the features.
+
 <img src="Progetto_cmepda/images/Permutation_mmse.png" width="300"/> <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
 ### Step 6: Void region
 
