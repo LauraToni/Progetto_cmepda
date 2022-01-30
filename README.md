@@ -27,7 +27,7 @@ Run the MATLAB code Processing.m to cut the original images into volumes of 50x5
 
 Run the Python code CNN.py to create and train the convolutional neural network on the images in AD_ROI_TH/ and CTRL_ROI_TH/. The model will be saved in the file 3d_CNN_15_50_100_Hipp.h5 and the wheights will be saved in CNN_weights_15_50_100.h5. The loss and the ROC will be displayed at the end of the train.
 
-<img src="Progetto_cmepda/images/loss_15_50-100.png" width="450"/>   
+<img src="Progetto_cmepda/images/loss_15_50-100.png" width="600"/>   
 
 
 ### Step 4: Transfer learning to predict mmse and age
