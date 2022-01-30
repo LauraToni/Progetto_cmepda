@@ -1,4 +1,4 @@
-""" Convolutional neural network applied to neurological AD and CTRL images"""
+""" Convolutional neural network applied to neurological AD and CTRL MRI images"""
 import os
 from glob import glob
 import math
@@ -25,39 +25,36 @@ from statistics import roc_curve, plot_cv_roc
 
 def normalize(x):
     """
-    Normalize the intensity of every pixel in the image
-    Parameters
-    ----------
-    x : 4D np.array
-        array containing the images
-    Returns
-    -------
-    x : 4D np.array
-        array containg the normalized images
+    Normalize the intensity of every pixel in the image.
+    
+    :Parameters:
+        x : 4D np.array
+            Array containing the images
+    :Returns:
+        x : 4D np.array
+            Array containg the normalized images
 
     """
     return x/x.max()
 
 def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
     """
-    Creates an array containing both original and augmented images. Does the same with their labels
-    Parameters
-    ----------
-    img : 4D np.array
-        array containing the images used for the training
-
-    img_aug: 4D np.array
-        array containing the augmented images used for the training
-    lbs: np.array
-        array containing the original image labels
-    lbs_aug: np.array
-        array containing the augmented image labels
-    Returns
-    -------
-    img_tot : np.array
-        array cointaing both original and augmented images
-    lbs_tot : np.array
-        array containing original and augmented image labels
+    Creates an array containing both original and augmented images. Does the same with their labels.
+    
+    :Parameters:
+        img : 4D np.array
+            Array containing the images used for the training
+        img_aug: 4D np.array
+            Array containing the augmented images used for the training
+        lbs: np.array
+            Array containing the original image labels
+        lbs_aug: np.array
+            Array containing the augmented image labels
+    :Returns:
+        img_tot : np.array
+            Array cointaing both original and augmented images
+        lbs_tot : np.array
+            Array containing original and augmented image labels
 
     """
     img_tot=np.append(img, img_aug, axis=0)
@@ -67,20 +64,17 @@ def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
 def inner_model(width=128, height=128, depth=64):
     """
     Built a 3D CNN model.
-    Parameters
-    ----------
-    widht: int
-        first image's dimension
-    height: int
-        second image's dimension
-    depth: int
-        third image's dimension
-
-    Returns
-    -------
-    model: tensorflow.keras.model()
-        the model of the CNN
-
+    
+    :Parameters:
+        widht: int
+            First image's dimension
+        height: int
+            Second image's dimension
+        depth: int
+            Third image's dimension
+    :Returns:
+        model: tensorflow.keras.model()
+            The model of the CNN
     """
 
     input1 = tf.keras.Input((width, height, depth, 1))
@@ -114,8 +108,8 @@ def inner_model(width=128, height=128, depth=64):
 
 
 if __name__=='__main__':
-    dataset_path_AD_ROI = "AD_CTRL/AD_s3"
-    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_s3"
+    dataset_path_AD_ROI = "AD_CTRL/AD_ROI_TH"
+    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI_TH"
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data
@@ -123,17 +117,10 @@ if __name__=='__main__':
     features = ['DXGROUP', 'ID', 'AGE', 'MMSE']
     print(df[features])
 
-
     # import images, labels, file names, age and mmse
-    X_o, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
+    X, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
 
-    X_o=normalize(X_o)
-
-    # Define ROI
-    X=X_o[:,35:85,50:100,25:75] #ippocampo
-    #X=X_o[:,11:109,12:138,24:110] #bordi neri precisi
-    #X=X_o[:,20:100,20:130,20:100]
-    #X=X_o
+    X=normalize(X)
 
     # Divide the dataset in train, validation and test in a static way
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=11)

@@ -1,8 +1,21 @@
-Statitics analysis for the CNN model
-====================================
+Statitics analysis
+==================
+
+Statistics analysis to study the results of the neural network.
+
+.. autofunction:: statistics.normalize
 
 .. autofunction:: statistics.dice
 
-.. autofunction:: statistics.dice_vectorized
-
 .. autofunction:: statistics.roc_curve
+
+.. autofunction:: statistics.plot_cv_roc
+
+.. autofunction:: statistics.dataframe_test
+
+.. autofunction:: statistics.correlation
+
+.. autofunction:: statistics.permutation
+
+.. autofunction:: statistics.scatter_plot
+

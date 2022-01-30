@@ -3,16 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Convolutional neural network for Alzheimer and control
-======================================================
+Convolutional neural network to classify Alzheimer and control MRI
+==================================================================
 
-This is the documetation of our exam project for the course of cmepda.
-We created a convolutional neural network to study 3D images in order
-to distinguish Alzheimer and control cases
+This is the documetation of our exam project for the course of Computing Methods for Experimental Physics and Data Analysis.
+We implemented a convolutional neural network to classify grey matter image segments obtained from the brain MRIs of a cohort of subjects with Alzheimer’s disease and control.
+Applying transfer learning we also used the pre-trained CNN layers to predict the age and the mini mental test score of the patients.
+
 
 .. toctree::
    :maxdepth: 4
-   :caption: Contents:
+   :caption: Codes:
 
    input
    augmentation
