@@ -34,17 +34,17 @@ Run the Python code CNN.py to create and train the convolutional neural network 
 
 Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfer learning and use the pre-trained CNN layers to predict the age and the mmse. The loss of the regression model will be displayed at the end of the train. 
 
-<img src="Progetto_cmepda/images/loss_mmse_regression.png" width="300"/> <img src="Progetto_cmepda/images/loss_mmse_regression_tuning.png" width="300"/>  
+<img src="Progetto_cmepda/images/loss_mmse_regression.png" width="450"/> <img src="Progetto_cmepda/images/loss_mmse_regression_tuning.png" width="450"/>  
 
 ### Step 5: Statistics analysis
 
 Run the Python code statistics.py to study the previous results. For the classofication problem it displays the cross validation k-folding ROC and the correlation between features such as age and mmse. 
 
-<img src="Progetto_cmepda/images/loss_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total.png" width="300"/>  
+<img src="Progetto_cmepda/images/ROC_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total.png" width="300"/>  
 
 For the transfer learning problem this codes also shows the scatter plots and the permutation test on the features.
 
-<img src="Progetto_cmepda/images/Permutation_mmse.png" width="300"/> <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
+<img src="Progetto_cmepda/images/Permutation_MMSE.png" width="300"/> <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
 ### Step 6: Void region
 
 To show that the main information on the Alzheimer's disease can be extracted from the hippocampus region, run again Steps 3 to 5 on the images contained in AD_ROI_VOID/ and CTRL_ROI_VOID/. Just change the dataset path in the python codes as follows:
