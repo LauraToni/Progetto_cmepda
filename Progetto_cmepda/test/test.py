@@ -1,6 +1,6 @@
 import unittest
 import sys
-sys.path.insert(0, '../')
+sys.path.insert(0, 'Progetto_cmepda/')
 import os
 import numpy as np
 import string
