@@ -31,21 +31,26 @@ Run the Python code CNN.py to create and train the convolutional neural network 
 
 ### Step 4: Transfer learning to predict mmse and age
 
-Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfer learning and use the pre-trained CNN layers to predict the age and mmse. The loss of the regression model will be displayed at the end of the train.
-<img src="Progetto_cmepda/images/loss TL.png" width="425"/>  
-<img src="Progetto_cmepda/images/loss TL.png" width="425"/>  
+Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfer learning and use the pre-trained CNN layers to predict the age and the mmse. The loss of the regression model will be displayed at the end of the train. 
+<img src="Progetto_cmepda/images/loss TL age.png" width="425"/>  
+<img src="Progetto_cmepda/images/loss TL mmse.png" width="425"/>  
 
 ### Step 5: Statistics analysis
 
-Run the Python code statistics.py to study the previous results. It displays the cross validation k-folding ROC, the correlation between features such as age and mmse, the scatter plots and the permutation test on the features using the transfer learning models.
-
+Run the Python code statistics.py to study the previous results. For the classofication problem it displays the cross validation k-folding ROC and the correlation between features such as age and mmse. 
+<img src="Progetto_cmepda/images/ROC cnn punto di lavoro.png" width="425"/>  
+<img src="Progetto_cmepda/images/loss mappa correlazione.png" width="425"/>  
+For the transfer learning problem this codes also shows the scatter plots and the permutation test on the features.
+<img src="Progetto_cmepda/images/permutation test.png" width="425"/>  
+<img src="Progetto_cmepda/images/scatter plot.png" width="425"/> 
 ### Step 6: Void region
 
-To show that the it was sufficient to train our network on hippocampus, run again Steps 4 to 8 on the images contained in AD_ROI_VOID/ and CTRL_ROI_VOID/. You just have to change the dataset path
+To show that the main information on the Alzheimer's disease can be extracted from the hippocampus region, run again Steps 3 to 5 on the images contained in AD_ROI_VOID/ and CTRL_ROI_VOID/. Just change the dataset path in the python codes as follows:
 
 ```
+int __name__=='__main__':
 dataset_path_AD_ROI = "AD_CTRL/AD_ROI_VOID"
 dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI_VOID"
 ```  
 <img src="Progetto_cmepda/images/loss CNN VOID.png" width="425"/>   
-<img src="Progetto_cmepda/images/ROC CNN VOID.png" width="425"/>   
+<img src="Progetto_cmepda/images/ROC CNN VOID.png" width="425"/>     
