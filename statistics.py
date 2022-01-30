@@ -1,6 +1,7 @@
 """ Statistics analysis """
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import tensorflow as tf
 import seaborn as sns
@@ -174,7 +175,7 @@ def plot_cv_roc(X, y, classifier, n_splits=5):
     plt.legend(loc="lower right", prop={'size': 15})
     plt.show()
 
-def dataframe_test(xtest, ytest, agetest, mmsetest):
+def dataframe_test(xtest,ytest, agetest, mmsetest, age_max, mmse_max, model, agemodel, mmsemodel):
     '''
     Create the dataframes containig labels, age, MMSE and a Confront_predizione
     for test's images. Confronto_predizione is an array that is 1 if the prediction
@@ -184,10 +185,20 @@ def dataframe_test(xtest, ytest, agetest, mmsetest):
             Array containg the test's images
         ytest : 1D array
             Array containg the labels of test's images
-        fileAge : Tupla
+        agetest : Tupla
             Tupla containing the age relative to test's images
-        fileMMSE : Tupla
+        mmsetest : Tupla
             Tupla containg the MMSE relative to test's images
+        age_max : Double
+            maximum age relative to test's images
+        mmse_max : Double
+            maximum mmse relative to test's images
+        model : Keras model
+            base model containing CNN layers
+        agemodel : Keras model
+            model used to predict age
+        mmsemodel : Keras model
+            model used to predict mmse
     :Returns:
         dataFrame : pandas dataframe
             Dataframe contining the feautures of all test's images
@@ -199,11 +210,16 @@ def dataframe_test(xtest, ytest, agetest, mmsetest):
 
     X_test = tf.expand_dims(xtest, axis=-1)
     y_pred_test = model.predict(X_test)
-    age_pred = age_model.predict(X_test)
-    mmse_pred = mmse_model.predict(X_test)
+    age_pred = agemodel.predict(X_test)
+    mmse_pred = mmsemodel.predict(X_test)
+
     y_pred_test = np.squeeze(y_pred_test)
     age_pred = np.squeeze(age_pred)
     mmse_pred = np.squeeze(mmse_pred)
+
+    mmsetest = np.array(mmsetest)
+    age_pred= age_pred*age_max
+    mmse_pred=mmse_pred*mmse_max
 
     print(f' y test : {np.shape(ytest)}')
     print(f' y pred  : {np.shape(y_pred_test)}')
@@ -345,16 +361,34 @@ def scatter_plot(data_frame):
     :Returns:
         None
     """
-    color = df.labels_test.apply(lambda x:'blue' if x == 0 else 'red')
+    color = data_frame.labels_test.apply(lambda x:'blue' if x == 0 else 'red')
 
     #in blu quelli controllo e in rosso quelli AD
-    ax = data_frame.plot(x='Age_pred', y='Age_test', kind='scatter', color=color);
+    ax = data_frame.plot(x='Age_test', y='Age_pred', kind='scatter', color=color)
     ax.grid()
+
+    # build the legend
+    red_patch = mpatches.Patch(color='red', label='AD')
+    blue_patch = mpatches.Patch(color='blue', label='CTRL')
+    patches = [red_patch, blue_patch]
+    legend = ax.legend(handles=patches,loc='upper left')
+
+    plt.xlim(0, 100)
+    plt.ylim(0, 100)
     plt.title('Scatter plot age')
     plt.show()
 
-    ax = data_frame.plot(x='MMSE_pred', y='MMSE_test', kind='scatter', color=color);
+    ax = data_frame.plot(x='MMSE_test', y='MMSE_pred', kind='scatter', color=color, label=True)
     ax.grid()
+
+    # build the legend
+    red_patch = mpatches.Patch(color='red', label='AD')
+    blue_patch = mpatches.Patch(color='blue', label='CTRL')
+    patches = [red_patch, blue_patch]
+    legend = ax.legend(handles=patches,loc='upper left')
+
+    plt.xlim(0, 35)
+    plt.ylim(0, 35)
     plt.title('Scatter plot mmse')
     plt.show()
 
@@ -372,6 +406,11 @@ if __name__=='__main__':
     # import images, labels, file names, age and mmse
     X, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
 
+    age = np.array(age)
+    mmse = np.array(mmse)
+    AGE_MAX=np.max(age)
+    MMSE_MAX=np.max(mmse)
+
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.15, random_state=11)
     _, age_test, _, mmse_test = train_test_split(age, mmse, test_size=0.15, random_state=11)
     print(f'X train shape: {X_train.shape}, X test shape: {X_test.shape}')
@@ -380,13 +419,13 @@ if __name__=='__main__':
     model = tf.keras.models.load_model("Modelli/3d_CNN_15_50_100_Hipp.h5")
     model.summary()
 
-    age_model = tf.keras.models.load_model("Modelli/3d_age_regression_15_50_100.h5")
+    age_model = tf.keras.models.load_model("Modelli/3d_age_regression_15_50_100_MAE_MSE_64_128_128_64_tun.h5")
     age_model.summary()
 
-    mmse_model = tf.keras.models.load_model("Modelli/3d_mmse_regression_15_50_100.h5")
+    mmse_model = tf.keras.models.load_model("Modelli/3d_mmse_regression_15_50_100_MAE_MSE_64_128_128_64_tun.h5")
     mmse_model.summary()
 
-    #auc = roc_curve(X_test, Y_test, model)
+    auc = roc_curve(X_test, Y_test, model)
 
     plot_cv_roc(X,Y, model, 5, scaler=None)
 
@@ -406,9 +445,24 @@ if __name__=='__main__':
     accuracy = metrics.accuracy_score(ytrue, ypred)
     print(f'Accuracy:{accuracy}')
 
-    df, df_AD, df_CTRL=dataframe_test(X_test, Y_test, age_test, mmse_test)
+    df, df_AD, df_CTRL=dataframe_test(X_test, Y_test, age_test, mmse_test, AGE_MAX, MMSE_MAX, model, age_model, mmse_model)
     print(df.head())
     correlation(df, df_AD, df_CTRL)
     permutation(df, Nperm=1000, feature='Age_test')
     permutation(df, Nperm=1000, feature='MMSE_test')
     scatter_plot(df)
+
+    '''
+    Compute MAE e RMSE for MMSE and AGE
+    '''
+    mmse_pred=df.MMSE_pred
+    age_pred=df.Age_pred
+
+    MAE_mmse=metrics.mean_absolute_error(mmse_test, mmse_pred)
+    MAE_age=metrics.mean_absolute_error(age_test, age_pred)
+
+    RMSE_mmse=np.sqrt(metrics.mean_squared_error(mmse_test, mmse_pred))
+    RMSE_age=np.sqrt(metrics.mean_squared_error(age_test, age_pred))
+
+    print(f'MAE AGE: {MAE_age}; RMSE AGE: {RMSE_age}')
+    print(f'MAE MMSE: {MAE_mmse}; RMSE MMSE: {RMSE_mmse}')
