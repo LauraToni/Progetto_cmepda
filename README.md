@@ -42,7 +42,7 @@ Run the Python code statistics.py to study the previous results. For the classof
 
 <img src="Progetto_cmepda/images/ROC_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total.png" width="300"/>  
 
-For the transfer learning problem this codes also shows the scatter plots and the permutation test on the features.
+For the transfer learning problem this code also shows the scatter plots and the permutation test on the features.
 
 <img src="Progetto_cmepda/images/Permutation_MMSE.png" width="300"/> <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
 ### Step 6: Void region
