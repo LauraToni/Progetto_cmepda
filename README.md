@@ -54,5 +54,5 @@ int __name__=='__main__':
 dataset_path_AD_ROI = "AD_CTRL/AD_ROI_VOID"
 dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI_VOID"
 ```  
-<img src="Progetto_cmepda/images/loss_15_50_100_cnn_VOID.png" width="425"/>   
+<img src="Progetto_cmepda/images/loss_15_50-100_cnn_VOID.png" width="425"/>   
 <img src="Progetto_cmepda/images/ROC_15_VOID_finale.png" width="425"/>     
