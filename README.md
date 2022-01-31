@@ -45,6 +45,7 @@ Run the Python code statistics.py to study the previous results. For the classif
 For the transfer learning problem this code also shows the scatter plots.
 
  <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
+ 
 ### Step 6: Void region
 
 To show that the main information on the Alzheimer's disease can be extracted from the hippocampus region, run again Steps 3 to 5 on the images contained in AD_ROI_VOID/ and CTRL_ROI_VOID/. Just change the dataset path in the python codes as follows:
