@@ -38,13 +38,13 @@ Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfe
 
 ### Step 5: Statistics analysis
 
-Run the Python code statistics.py to study the previous results. For the classofication problem it displays the cross validation k-folding ROC and the correlation between features such as age and mmse. 
+Run the Python code statistics.py to study the previous results. For the classification problem it displays the cross validation k-folding ROC, the correlation between features such as age and mmse and the permutation test on the features.
 
-<img src="Progetto_cmepda/images/ROC_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total.png" width="300"/>  
+<img src="Progetto_cmepda/images/ROC_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total.png" width="300"/>  <img src="Progetto_cmepda/images/Permutation_MMSE.png" width="300"/>
 
-For the transfer learning problem this code also shows the scatter plots and the permutation test on the features.
+For the transfer learning problem this code also shows the scatter plots.
 
-<img src="Progetto_cmepda/images/Permutation_MMSE.png" width="300"/> <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
+ <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
 ### Step 6: Void region
 
 To show that the main information on the Alzheimer's disease can be extracted from the hippocampus region, run again Steps 3 to 5 on the images contained in AD_ROI_VOID/ and CTRL_ROI_VOID/. Just change the dataset path in the python codes as follows:
