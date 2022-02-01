@@ -40,7 +40,7 @@ Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfe
 
 Run the Python code statistics.py to study the previous results. For the classification problem it displays the cross validation k-folding ROC, the correlation between features such as age and mmse and the permutation test on the features.
 
-<img src="Progetto_cmepda/images/ROC_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total(1).png" width="300"/>  <img src="Progetto_cmepda/images/Permutation_MMSE.png" width="300"/>
+<img src="Progetto_cmepda/images/ROC_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total (1).png" width="300"/>  <img src="Progetto_cmepda/images/Permutation_MMSE.png" width="300"/>
 
 For the transfer learning problem this code also shows the scatter plots.
 
