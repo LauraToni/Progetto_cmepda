@@ -43,7 +43,7 @@ Run the Python code statistics.py to study the previous results. For the classif
 <img src="Progetto_cmepda/images/ROC_15_50_100_finale.png" width="300"/> <img src="Progetto_cmepda/images/heat_data_total (1).png" width="300"/>  <img src="Progetto_cmepda/images/Permutation_MMSE.png" width="300"/>
 
 For the transfer learning problem this code also shows the scatter plots.
-
+ <img src="Progetto_cmepda/images/Scatter_plot_age.png" width="300"/> 
  <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
  
 ### Step 6: Void region
