@@ -44,8 +44,8 @@ Run the Python code statistics.py to study the previous results. For the classif
 
 For the transfer learning problem this code also shows the scatter plots.
 
- <img src="Progetto_cmepda/images/Scatter_plot_age.png" width="300"/> 
- <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="300"/> 
+ <img src="Progetto_cmepda/images/Scatter_plot_age.png" width="250"/> 
+ <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="250"/> 
  
 ### Step 6: Void region
 
