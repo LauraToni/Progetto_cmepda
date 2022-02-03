@@ -28,7 +28,7 @@ class TestCNN(unittest.TestCase):
         self.NCTRL=5
         self.dataset_path_AD_ROI = "AD_CTRL/AD_ROI"
         self.dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI"
-        self.dataset_path_metadata = "../AD_CTRL_metadata_labels.csv"
+        self.dataset_path_metadata = "Progetto_cmepda/AD_CTRL_metadata_labels.csv"
         _, _, self.dica , self.dicm = import_csv(self.dataset_path_metadata)
         self.x, self.y, self.fnames_AD, self.fnames_CTRL, self.file_id, self.age, self.mmse =read_dataset(self.dataset_path_AD_ROI, self.dataset_path_CTRL_ROI, self.dica, self.dicm, str_1='1', str_2='_')
         self.volume = VolumeAugmentation(self.x, self.y, shape=(self.x))
