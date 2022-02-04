@@ -16,9 +16,9 @@ except:
     raise ImportError('Install NIBABEL')
 
 from data_augmentation import VolumeAugmentation
-from CNN import normalize, stack_train_augmentation
+from CNN import stack_train_augmentation
 from input_dati import read_dataset,import_csv, cut_file_name
-from statistics import roc_curve, plot_cv_roc
+from statistics import roc_curve, normalize
 
 def training_tl(X, feature, size):
     """

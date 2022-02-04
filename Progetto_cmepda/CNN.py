@@ -16,31 +16,17 @@ except:
 
 from data_augmentation import VolumeAugmentation
 from input_dati import read_dataset,import_csv, cut_file_name
-from statistics import roc_curve, plot_cv_roc
+from statistics import roc_curve, normalize
 
 #Attivare il comando sottostante per utilizzare plaidml
 #os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 #pylint: disable=invalid-name
 #pylint: disable=line-too-long
 
-def normalize(x):
-    """
-    Normalize the intensity of every pixel in the image.
-    
-    :Parameters:
-        x : 4D np.array
-            Array containing the images
-    :Returns:
-        x : 4D np.array
-            Array containg the normalized images
-
-    """
-    return x/x.max()
-
 def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
     """
     Creates an array containing both original and augmented images. Does the same with their labels.
-    
+
     :Parameters:
         img : 4D np.array
             Array containing the images used for the training
@@ -64,7 +50,7 @@ def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
 def inner_model(width=128, height=128, depth=64):
     """
     Built a 3D CNN model.
-    
+
     :Parameters:
         widht: int
             First image's dimension
@@ -156,12 +142,12 @@ if __name__=='__main__':
 
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
-    #Fit the data
+    # Fit the data
     history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=True, epochs=2, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
-
+    # Save weoghts for transfer learning
     model.save_weights('CNN_weights.h5')
 
-    #history contains information about the training
+    # History contains information about the training
     print(history.history.keys())
 
     fig, ax = plt.subplots(1, 2, figsize=(20, 3))
