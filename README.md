@@ -12,6 +12,8 @@ Applying transfer learning we also used the pre-trained CNN layers to predict th
 
 ## How to use
 
+To use our Python codes the following packages are needed: numpy, scikit-image, scikit-learn, pandas, matplotlib, tensorflow, nibabel, random, seaborn and scipy.
+
 ### Step 1: Data
 
 After cloning the repository, download the folder AD_CTRL from https://drive.google.com/drive/folders/1kKl1rOiU5eNDtKcTV4DAbwsDm83yyMIa
@@ -32,7 +34,7 @@ Run the Python code CNN.py to create and train the convolutional neural network 
 
 ### Step 4: Transfer learning to predict mmse and age
 
-Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfer learning and use the pre-trained CNN layers to predict the age and the mmse. The loss of the regression model will be displayed at the end of the train. 
+Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfer learning and use the pre-trained CNN layers to predict the age and the mmse. The loss of the regression model will be displayed at the end of the train.
 
 <img src="Progetto_cmepda/images/loss_mmse_regression.png" width="450"/> <img src="Progetto_cmepda/images/loss_mmse_regression_tuning.png" width="450"/>  
 
@@ -44,9 +46,9 @@ Run the Python code statistics.py to study the previous results. For the classif
 
 For the transfer learning problem this code also shows the scatter plots.
 
- <img src="Progetto_cmepda/images/Scatter_plot_age.png" width="250"/> 
- <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="250"/> 
- 
+ <img src="Progetto_cmepda/images/Scatter_plot_age.png" width="250"/>
+ <img src="Progetto_cmepda/images/Scatter_plot_mmse.png" width="250"/>
+
 ### Step 6: Void region
 
 To show that the main information on the Alzheimer's disease can be extracted from the hippocampus region, run again Steps 3 to 5 on the images contained in AD_ROI_VOID/ and CTRL_ROI_VOID/. Just change the dataset path in the python codes as follows:
