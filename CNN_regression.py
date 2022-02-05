@@ -80,8 +80,8 @@ def training_tl(X, feature, size, number_feature):
 
     # Build the base model
     base_model.summary()
-    #base_model.load_weights('Modelli/CNN_weights_Hipp_finale.h5', by_name=True)
-    base_model.load_weights('Modelli/CNN_VOID_weights_15.h5', by_name=True)
+    base_model.load_weights('Modelli/CNN_weights_Hipp_finale.h5', by_name=True)
+    #base_model.load_weights('Modelli/CNN_VOID_weights_15.h5', by_name=True)
     base_model.trainable = False
 
     # Set the learning Rate
@@ -106,7 +106,7 @@ def training_tl(X, feature, size, number_feature):
 
     # Define callbacks
     checkpoint_cb = tf.keras.callbacks.ModelCheckpoint(
-            "3d_regression_AgeCTRL_20_{val_MSE}_VOID_finalissima.h5", save_best_only=True
+            "3d_regression_AgeCTRL_20_{val_MSE}_hipp_finalissima.h5", save_best_only=True
     )
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
@@ -134,7 +134,7 @@ def training_tl(X, feature, size, number_feature):
     model.summary()
 
     checkpoint_tun = tf.keras.callbacks.ModelCheckpoint(
-            '3d_regression_AGECTRL_20_{val_MSE}_VOID_tun_finalissima.h5', save_best_only=True
+            '3d_regression_AGECTRL_20_{val_MSE}_hipp_tun_finalissima.h5', save_best_only=True
     )
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-7), loss='MAE', metrics=['MSE'])
@@ -160,8 +160,8 @@ def training_tl(X, feature, size, number_feature):
 
 
 if __name__=='__main__':
-    dataset_path_AD_ROI = "AD_CTRL/AD_ROI_VOID"
-    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI_VOID"
+    dataset_path_AD_ROI = "AD_CTRL/AD_ROI_TH"
+    dataset_path_CTRL_ROI = "AD_CTRL/CTRL_ROI_TH"
     dataset_path_metadata = "AD_CTRL_metadata_labels.csv"
 
     # Import csv data

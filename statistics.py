@@ -431,15 +431,12 @@ if __name__=='__main__':
     #model = tf.keras.models.load_model("Modelli/3d_CNN_0.48_VOID_15.h5")
     model.summary()
 
-    #age_model = tf.keras.models.load_model("Modelli/3d_regression_Age_15_0.0052_tun_finale.h5")
     age_model = tf.keras.models.load_model("Modelli/3d_regression_Age_15_0.0052_finale.h5")
     age_model.summary()
 
-    #mmse_model = tf.keras.models.load_model("Modelli/3d_regression_Mmse_15_0.018_tun_finale.h5")
     mmse_model = tf.keras.models.load_model("Modelli/3d_regression_MMSE_15_0.017_finale.h5")
     mmse_model.summary()
 
-    #age_model_ctrl = tf.keras.models.load_model("Modelli/3d_regression_AGECTRL_20_0.0082_tun_finale.h5")
     age_model_ctrl = tf.keras.models.load_model("Modelli/3d_regression_AgeCTRL_20_0.0086_finale.h5")
     #age_model_ctrl = tf.keras.models.load_model("Modelli/3d_regression_AGECTRL_20_0.0083_VOID_tun_finalissima.h5")
     age_model_ctrl.summary()
