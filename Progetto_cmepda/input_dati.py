@@ -33,7 +33,8 @@ def cut_file_name (file_name, str_1, str_2):
 
 def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv_age, dic_csv_mmse, str_1, str_2, x_id ="AD-", y_id="CTRL-"):
     """
-    Load images from NIFTI directory and arrange image names, age and mmse as the csv file.
+    Load images from NIFTI directory and arrange image names,
+    age and mmse of the csv file to match images order.
 
     :Parameters:
         dataset_path_AD : str
@@ -94,7 +95,7 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv_age, dic_csv_mmse, 
         file_Mmse.append(dic_csv_mmse[name])
 
         # Load AD images
-        print(f'Caricamento immagine {name} ({i} di 144)')
+        print(f'Loading image {name} ({i} of 144)')
         i+=1
     i=1
     for fname_CTRL in file_names_CTRL:
@@ -110,7 +111,7 @@ def read_dataset(dataset_path_AD, dataset_path_CTRL, dic_csv_age, dic_csv_mmse, 
         file_Mmse.append(dic_csv_mmse[name])
 
         # Load CTRL images
-        print(f'Caricamento immagine {name} ({i} di 189)')
+        print(f'Loading image {name} ({i} of 189)')
         i+=1
     return np.array(X_list), np.array(Y_list), file_names_AD, file_names_CTRL, id_list, file_Age, file_Mmse
 

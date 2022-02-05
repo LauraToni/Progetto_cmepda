@@ -16,7 +16,8 @@ SOGLIA = 0.387
 
 def normalize(x):
     """
-    Normalize the intensity of every pixel in the image
+    Normalize the intensity of every pixel in the image.
+
     :Parameters:
         x : 4D np.array
             array containing the images
@@ -29,7 +30,8 @@ def normalize(x):
 
 def dice(pred, true, k = 1):
     """
-    Calculate Dice index for a single image
+    Calculate Dice index for a single image.
+
     :Parameters:
         pred: float
             the prediction of the CNN
@@ -40,12 +42,14 @@ def dice(pred, true, k = 1):
             Dice index for the image
     """
     intersection = np.sum(pred[true==k]) * 2.0
+    # Compute dice coefficient
     dice_coef = intersection / (np.sum(pred) + np.sum(true))
     return dice_coef
 
 def roc_curve(xtest, ytest, model):
     """
-    Display ROC curve and calculate AUC
+    Display ROC curve and calculate AUC.
+
     :Parameters:
         xtest: 4D np.array
             array containg test images
@@ -55,16 +59,35 @@ def roc_curve(xtest, ytest, model):
         auc: float
             area under the ROC curve
     """
+    # Compute y scores
     y_score = model.predict(xtest)
-    fpr, tpr, thresholds = metrics.roc_curve(ytest, y_score)
 
+    # Compute roc curve
+    fpr, tpr, thresholds = metrics.roc_curve(ytest, y_score)
+    print(f"{fpr} - {tpr} - {thresholds}\n")
+    # Compute area under the curve
     auc = metrics.roc_auc_score(ytest, y_score)
     print(f'AUC: {auc}')
+
+    # Choose the threashold
+    j=0
+    k=0
+    while (k==0):
+        if ((threasholds[j]> 0.76) and (threasholds[j] < 0.77)):
+            indice=j
+            k=k+1
+        j=j+1
+
+    print(f'La soglia è: {threasholds[indice]}')
+    print(f'FPR: {fpr[indice]}')
+    print(f'sensitività: {tpr[indice]}')
+    print(f'specificità: {1 - fpr[indice]}')
 
     plt.figure()
     lw = 2
     plt.plot(fpr, tpr, color="darkorange", lw=lw, label="ROC curve (area = %0.2f)" % auc,)
     plt.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
+    plt.axvline(fpr[indice], linestyle='--', color='green')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
     plt.xlabel("False Positive Rate")
@@ -75,111 +98,77 @@ def roc_curve(xtest, ytest, model):
 
     return auc
 
-def plot_cv_roc(X, y, classifier, n_splits=5):
-    """
-    Implement k-fold-CV with k=n_splits, plot the ROC curves for each k fold
-    and their average. It also display the corresponding AUC values and
-    the standard deviation over the k folders.
-    :Parameters:
-        X : 4D np.array
-            Array containing the images
-        y : 1D np.array
-            Array containing labels
-        classifier : Keras.model
-            The CNN model
-        n_splits : int
-            Number of folders. Default=5
-    """
-
-    model = classifier
-    try:
-        y = y.to_numpy()
-        X = X.to_numpy()
-    except AttributeError:
-        pass
-
-    cv = StratifiedKFold(n_splits)
-
-    tprs = [] #True positive rate
-    aucs = [] #Area under the ROC Curve
-    trhs = [] #thresholds
-    interp_fpr = np.linspace(0, 1, 100)
-    plt.figure()
-    i = 0
-    for train, test in cv.split(X, y):
-
-        y_score = model.predict(X[test])
-        fpr, tpr, thresholds = metrics.roc_curve(y[test], y_score)
-        #print(f"{fpr} - {tpr} - {thresholds}\n")
-        interp_tpr = np.interp(interp_fpr, fpr, tpr)
-        interp_threshold = np.interp(interp_fpr, fpr, thresholds)
-        tprs.append(interp_tpr)
-        trhs.append(interp_threshold)
-        roc_auc = metrics.auc(fpr, tpr)
-        #roc_auc = metrics.roc_auc_score(y[test], y_score)
-        aucs.append(roc_auc)
-        plt.plot(fpr, tpr, lw=1, alpha=0.3,
-            label=f'ROC fold {i} (AUC = {roc_auc:.2f})')
-        i += 1
-
-    plt.legend()
-    plt.xlabel('False Positive Rate (FPR)')
-    plt.ylabel('True Positive Rate (TPR)')
-    plt.show()
-
-    plt.figure()
-    plt.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',
-        label='Chance', alpha=.8)
-
-    mean_tpr = np.mean(tprs, axis=0)
-    mean_trh = np.mean(trhs, axis=0)
-    mean_tpr[-1] = 1.0
-    mean_auc = metrics.auc(interp_fpr, mean_tpr)
-    std_auc = np.std(aucs)
-    plt.plot(interp_fpr, mean_tpr, color='b',
-          label=f'Mean ROC (AUC = {mean_auc:.2f} $\pm$ {std_auc:.2f})',
-          lw=2, alpha=.8)
-    plt.plot(interp_fpr, mean_trh, color='c',
-          label='threshold',
-          lw=2, alpha=.8)
-    print('soglie')
-    print(mean_trh)
-    print('True positive')
-    print(mean_tpr)
-
-    j=0
-    k=0
-    while (k==0):
-        if ((mean_tpr[j]> 0.76) and (mean_tpr[j] < 0.77)):
-            indice=j
-            k=k+1
-        j=j+1
-
-    plt.axvline(interp_fpr[indice], linestyle='--', color='green')
-    print(f'La soglia è: {mean_trh[indice]}')
-    print(f'FPR: {interp_fpr[indice]}')
-    print(f'sensitività: {mean_tpr[indice]}')
-    print(f'specificità: {1 - interp_fpr[indice]}')
-
-    std_tpr = np.std(tprs, axis=0)
-    tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
-    tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-    plt.fill_between(interp_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2,
-                  label=r'$\pm$ 1 std. dev.')
-
-    plt.xlim([-0.01, 1.01])
-    plt.ylim([-0.01, 1.01])
-    plt.xlabel('False Positive Rate',fontsize=18)
-    plt.ylabel('True Positive Rate',fontsize=18)
-    plt.title('Cross-Validation ROC',fontsize=18)
-    plt.legend(loc="lower right", prop={'size': 15})
-    plt.show()
-
-def dataframe_test(xtest,ytest, agetest, mmsetest, age_max, mmse_max, model, agemodel, mmsemodel):
+def permutation(df, Nperm):
     '''
-    Create the dataframes containig labels, age, MMSE and a Confront_predizione
-    for test's images. Confronto_predizione is an array that is 1 if the prediction
+    Compute the permutation test on the difference between predicted and real age.
+    The null hypothesis is that there's no difference between the distributions of AD and CTRL,
+    against the hipothesis that there's a difference for images belonging to one category.
+
+    :Parameters:
+        df : pandas dataframe
+            Dataframe containing the features of all the test images
+        Nperm : int
+            Number of permutations
+    :Returns:
+        p_value : float
+            p_value of the null hypothesis
+    '''
+    feature_AD_pred = df[df['labels'] == 1]['Age_pred']
+    feature_CTRL_pred = df[df['labels'] == 0]['Age_pred']
+    feature_AD_test = df[df['labels'] == 1]['Age_test']
+    feature_CTRL_test = df[df['labels'] == 0]['Age_test']
+
+    # AD mean age difference
+    feature_AD_diff = feature_AD_pred-feature_AD_test
+    feature_AD_mean = feature_AD_diff.mean()
+
+    # CTRL mean age difference
+    feature_CTRL_diff = feature_CTRL_pred-feature_CTRL_test
+    feature_CTRL_mean = feature_CTRL_diff.mean()
+
+    feature_diff = feature_CTRL_mean - feature_AD_mean
+    n_perm = Nperm
+    n_examples = df.shape[0]
+
+    feature_all = np.append(feature_AD_diff, feature_CTRL_diff)
+
+    feature_diff_perm = []
+    for i in range(n_perm):
+        perm_i = np.random.permutation(feature_all)
+        avg_A = perm_i[1:feature_AD_diff.shape[0]].mean()
+        avg_B = perm_i[feature_AD_diff.shape[0]:n_examples].mean()
+        feature_diff_perm = np.append(feature_diff_perm, avg_A - avg_B)
+    feature_diff_perm.shape
+
+    plt.title('Permutation test age')
+    _ = plt.hist(feature_diff_perm, 25, histtype='step')
+    plt.xlabel(f'Ages [yrs] ')
+    plt.ylabel('Occurrences')
+    plt.axvline(feature_diff, linestyle='--', color='red')
+    plt.show()
+
+    feature_diff_perm[abs(feature_diff_perm) > abs(feature_diff)].shape[0]
+
+    r = feature_diff_perm[feature_diff_perm > feature_diff].shape[0]
+    p_value = (r + 1 )/ (n_perm +1)
+    if r == 0:
+        print(f'The p value is p < {p_value:.3f}')
+    else:
+        print(f'The p value is p = {p_value:.3f}')
+    if p_value < 0.05:
+        print('The difference between the mean weight loss of the two groups is statistically significant! ')
+    else:
+        print('The null hypothesis cannot be rejected')
+
+    return p_value
+
+
+def dataframe_test(xtest, ytest, agetest, mmsetest, age_max, mmse_max, model, agemodel, mmsemodel):
+    """
+    Create the dataframes containig labels, age and MMSE and Confronto_predizione.
+    Confronto_predizione is an array that is 1 if the prediction
     of the model is correct and 0 if it is wrong.
+
     :Parameters:
         xtest : 4D array
             Array containg the test's images
@@ -206,13 +195,13 @@ def dataframe_test(xtest,ytest, agetest, mmsetest, age_max, mmse_max, model, age
             Dataframe contaning the features of test images belongig to AD category
         dataFrame_CTRL :
             Dataframe contaning the feature of test images belongig to CTRL category
-    '''
-
+    """
+    # Expand X test dimension to compute y, age and mmse prediction
     X_test = tf.expand_dims(xtest, axis=-1)
     y_pred_test = model.predict(X_test)
     age_pred = agemodel.predict(X_test)
     mmse_pred = mmsemodel.predict(X_test)
-
+    # Squeeze dimensions
     y_pred_test = np.squeeze(y_pred_test)
     age_pred = np.squeeze(age_pred)
     mmse_pred = np.squeeze(mmse_pred)
@@ -238,6 +227,7 @@ def dataframe_test(xtest,ytest, agetest, mmsetest, age_max, mmse_max, model, age
         if y_conf[i] == False:
             y_Conf[i]=0
 
+    # Create dataframe labels
     d = {'labels_test': ytest, 'Confronto_predizione': y_Conf, 'Age_test' : agetest, 'Age_pred' : age_pred, 'MMSE_test' : mmsetest, 'MMSE_pred' : mmse_pred }
 
     dataFrame = pd.DataFrame(data=d)
@@ -246,44 +236,45 @@ def dataframe_test(xtest,ytest, agetest, mmsetest, age_max, mmse_max, model, age
 
     return dataFrame, dataFrame_AD, dataFrame_CTRL
 
-def correlation(df, dfAD, dfCTRL):
+
+def correlation(df, name):
     '''
     Compute correlations between features in dataframes containing the features
     of test images and their predicted category.
+
     :Parameters:
         df : pandas dataframe
             Dataframe containing the features of all the test images
-        dfAD : pandas dataframe
-            Dataframe containing the features of the test images belongig to AD category
-        dfCTRL: pandas dataframe
-            Dataframe containing the features of the test images belongig to CTRL category
+        name : str
+            Identification name of the dataset
     :Returns:
         None
     '''
-    #correlazione con tutti i casi di test, quindi AD e controllo
-    print(df.drop('labels_test', axis=1).corr())
+    # Correlation between the output of the classifier, age and mmse
+    print(df.drop('labels_test', 'Confronto_predizione', 'Age_pred', 'mmse_pred', axis=1).corr())
     #heatmap
     plt.figure()
-    plt.title('Heatmap correlations dataframe total')
+    plt.title('Heatmap correlations dataframe {name} classication')
     sns_heatmap=sns.heatmap(df.drop('labels_test', axis=1).corr())
     sns_heatmap.set_xticklabels(labels=sns_heatmap.get_xticklabels(), rotation=20)
     plt.show()
 
-    #correlazione con AD di test
-    print(dfAD.drop('labels_test', axis=1).corr())
+    # Correlation between the output of the predicted age and the real age and mmse
+    print(df.drop('labels_test', 'output_classifier', 'Confronto_predizione', 'mmse_pred', axis=1).corr())
     #heatmap
     plt.figure()
-    plt.title('Heatmap correlations dataframe AD')
-    sns_heatmap=sns.heatmap(dfAD.drop('labels_test', axis=1).corr())
+    plt.title('Heatmap correlations dataframe {name} age regression')
+    sns_heatmap=sns.heatmap(df.drop('labels_test', axis=1).corr())
     sns_heatmap.set_xticklabels(labels=sns_heatmap.get_xticklabels(), rotation=20)
     plt.show()
 
-    #correlazione con CTRL di test
-    print(dfCTRL.drop('labels_test', axis=1).corr())
+
+    # Correlation between the output of the predicted mmse and the real age and mmse
+    print(df.drop('labels_test', 'output_classifier','Confronto_predizione', 'age_pred', axis=1).corr())
     #heatmap
     plt.figure()
-    plt.title('Heatmap correlations dataframe CTRL')
-    sns_heatmap=sns.heatmap(dfCTRL.drop('labels_test', axis=1).corr())
+    plt.title('Heatmap correlations dataframe {name} mmse regression')
+    sns_heatmap=sns.heatmap(df.drop('labels_test', axis=1).corr())
     sns_heatmap.set_xticklabels(labels=sns_heatmap.get_xticklabels(), rotation=20)
     plt.show()
 
@@ -291,10 +282,10 @@ def correlation(df, dfAD, dfCTRL):
 
 def permutation(df, Nperm, feature='Age_test'):
     '''
-    Compute the permutation test with test image features.
-    The null hypothesis is that the mean feature distribution of the correcly predicted images
-    the wrongly predicted ones are the same, against the hypothesis that they are different.
-    The p-value for the null hypothesis is returned.
+    Compute the permutation test on the difference between predicted and real age.
+    The null hypothesis is that there's no difference between the distributions of AD and CTRL,
+    against the hipothesis that there's a difference for images belonging to one category.
+
     :Parameters:
         df : pandas dataframe
             Dataframe containing the features of all the test images
@@ -354,7 +345,8 @@ def permutation(df, Nperm, feature='Age_test'):
 
 def scatter_plot(data_frame):
     """
-    Display scatter plots of age and MMSE
+    Display scatter plots of age and MMSE.
+
     :Parameters:
         data_frame : Pandas DataFrame
             DataFrame containing test images features
@@ -435,9 +427,11 @@ if __name__=='__main__':
     ytrain = np.expand_dims(Y_train, axis=-1)
     #print(Y_train[idx].shape, ytrain.shape)
 
+    yprob = model.predict(xtrain).squeeze()
     ypred = model.predict(xtrain).squeeze()>SOGLIA
     ytrue = Y_train.squeeze()
 
+    # Compute dice coeffcient
     dice_value = dice(ypred, ytrue)
     print(f'Indice di DICE:{dice_value}')
 
@@ -445,9 +439,12 @@ if __name__=='__main__':
     accuracy = metrics.accuracy_score(ytrue, ypred)
     print(f'Accuracy:{accuracy}')
 
+
     df, df_AD, df_CTRL=dataframe_test(X_test, Y_test, age_test, mmse_test, AGE_MAX, MMSE_MAX, model, age_model, mmse_model)
     print(df.head())
-    correlation(df, df_AD, df_CTRL)
+    correlation(df, 'total')
+    correlation(df_AD, 'AD')
+    correlation(df_CTRL, 'CTRL')
     permutation(df, Nperm=1000, feature='Age_test')
     permutation(df, Nperm=1000, feature='MMSE_test')
     scatter_plot(df)
