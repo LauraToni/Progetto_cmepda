@@ -57,10 +57,12 @@ class VolumeAugmentation():
         X=[]
         Y=[]
         self.shuffle_dataset()
+        i = 1
         for image, labels in zip(self.x, self.y):
             X.append(self.rotate(image))
             Y.append(labels)
-            print("sto processando l'immagine")
+            print(f'Processing image {i} of {len(self.y)}')
+            i+=1
         return np.array(X), np.array(Y)
 
     def rotate(self, volume):
