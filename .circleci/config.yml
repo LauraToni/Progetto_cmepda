@@ -16,7 +16,7 @@ jobs:
          pip-dependency-file: requirements.txt
       - run:
           name: Run tests
-          command: python Progetto_cmepda/test/test.py
+          command: python test/test.py
 workflows:
   main:
     jobs:
