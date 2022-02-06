@@ -1,4 +1,4 @@
-Read NifTy images and csv file
+Read NifTi images and csv file
 ==============================
 This document contains the functions to import metadata
 from a csv file and load images from a NifTi directory.
