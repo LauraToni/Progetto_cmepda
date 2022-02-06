@@ -36,7 +36,7 @@ This code also creates volumes of 100x120x100 (saved in AD_ROI_LARGE and CTRL_RO
 
 Run the Python code CNN.py to create and train the convolutional neural network on the images in AD_ROI_TH/ and CTRL_ROI_TH/. The model will be saved in the file 3d_CNN_Hipp_finale.h5 and the weights will be saved in CNN_weights_Hipp_finale.h5. The loss and the ROC will be displayed at the end of the train. The models we obtained can be found in the folder Progetto_cmepda/Modelli under the name 3d_CNN_0.327_Hipp_finale.h5 and CNN_weights_Hipp_finale.h5.
 
-<img src="Progetto_cmepda/images/loss_15_50-100.png" width="600"/>   <img src="Progetto_cmepda/images/ROC_15_Hipp_final_lavoro.png" width="300"/>  
+<img src="Progetto_cmepda/images/ROC_15_Hipp_final_lavoro.png" width="300"/>  
 
 
 ### Step 4: Transfer learning to predict MMSE and age
