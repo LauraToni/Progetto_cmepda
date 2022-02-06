@@ -16,12 +16,26 @@ except:
 
 from data_augmentation import VolumeAugmentation
 from input_dati import read_dataset,import_csv, cut_file_name
-from statistics import roc_curve, normalize
+from statistics import roc_curve, plot_cv_roc
 
 #Attivare il comando sottostante per utilizzare plaidml
 #os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 #pylint: disable=invalid-name
 #pylint: disable=line-too-long
+
+def normalize(x):
+    """
+    Normalize the intensity of every pixel in the image.
+
+    :Parameters:
+        x : 4D np.array
+            Array containing the images
+    :Returns:
+        x : 4D np.array
+            Array containg the normalized images
+
+    """
+    return x/x.max()
 
 def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
     """
@@ -104,12 +118,12 @@ if __name__=='__main__':
     print(df[features])
 
     # import images, labels, file names, age and mmse
-    X, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='.')
+    X, Y, fnames_AD, fnames_CTRL, file_id, age, mmse = read_dataset(dataset_path_AD_ROI, dataset_path_CTRL_ROI,dict_age, dict_mmse , str_1='1', str_2='_')
 
     X=normalize(X)
 
     # Divide the dataset in train, validation and test in a static way
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=11)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.15, random_state=14)
 
     #Augment the data using VolumeAugmentation class
     mass_gen = VolumeAugmentation(X_train, Y_train, shape=(X.shape[1], X.shape[2], X.shape[3]))
@@ -137,17 +151,17 @@ if __name__=='__main__':
 
     # Define callbacks
     checkpoint_cb = tf.keras.callbacks.ModelCheckpoint(
-            "3d_regression_transfer_{val_MAE}_Hipp.h5", save_best_only=True
+            "3d_CNN_Hipp_finale.h5", save_best_only=True
     )
 
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
-    # Fit the data
-    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=True, epochs=2, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
-    # Save weoghts for transfer learning
-    model.save_weights('CNN_weights.h5')
+    #Fit the data
+    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.10, batch_size=32, shuffle=True, epochs=100, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
 
-    # History contains information about the training
+    model.save_weights('CNN_weights_Hipp_finale.h5')
+
+    #history contains information about the training
     print(history.history.keys())
 
     fig, ax = plt.subplots(1, 2, figsize=(20, 3))
