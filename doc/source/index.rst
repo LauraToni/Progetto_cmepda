@@ -21,10 +21,3 @@ Applying transfer learning we also used the pre-trained CNN layers to predict th
    regression
    statistics
    
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
