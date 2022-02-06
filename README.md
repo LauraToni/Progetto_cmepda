@@ -25,7 +25,9 @@ Run the MATLAB code Processing.m to cut the original images into volumes of 50x5
 
 <img src="Progetto_cmepda/images/ROI_TH_rettangolo.png" width="300"/>  <img src="Progetto_cmepda/images/ROI_VOID_rettangolo.png" width="300"/>
 
+
 This code also creates volumes of 100x120x100 (saved in AD_ROI_LARGE and CTRL_ROI_LARGE) and 100x100x100 (saved in AD_ROI_TOTAL and CTRL_ROI_TOTAL) containing the whole brain MRIs images reducing the black borders.
+
 
 <img src="Progetto_cmepda/images/ROI_TOTAL_100_rettangolo.png" width="300"/>  <img src="Progetto_cmepda/images/ROI_LARGE_120_rettangolo.png" width="300"/>
 
@@ -77,7 +79,6 @@ To select the dataset on which implement the transfer learning just comment the 
             "3d_mmse_regression_{feature}_{size}_tun.h5", save_best_only=True
     )
 ```
-
 
 
 ### Step 5: Statistics analysis
