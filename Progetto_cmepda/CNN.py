@@ -16,26 +16,11 @@ except:
 
 from data_augmentation import VolumeAugmentation
 from input_dati import read_dataset,import_csv, cut_file_name
-from statistics import roc_curve
+from statistics import roc_curve, normalize
 
-#Attivare il comando sottostante per utilizzare plaidml
-#os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 #pylint: disable=invalid-name
 #pylint: disable=line-too-long
 
-def normalize(x):
-    """
-    Normalize the intensity of every pixel in the image.
-
-    :Parameters:
-        x : 4D np.array
-            Array containing the images
-    :Returns:
-        x : 4D np.array
-            Array containg the normalized images
-
-    """
-    return x/x.max()
 
 def stack_train_augmentation(img, img_aug, lbs, lbs_aug):
     """
