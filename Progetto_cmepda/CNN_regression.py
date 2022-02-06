@@ -10,6 +10,7 @@ from skimage.io import imread
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 import tensorflow as tf
+import string
 try:
     import nibabel as nib
 except:
@@ -20,7 +21,7 @@ from CNN import stack_train_augmentation
 from input_dati import read_dataset,import_csv, cut_file_name
 from statistics import roc_curve, normalize
 
-def training_tl(X, feature, size):
+def training_tl(X, feature, size, number_feature):
     """
     Train the transfer learning model
 
@@ -31,12 +32,14 @@ def training_tl(X, feature, size):
             labels of the feature considered
         size : float
             Percentage of dataset used as test set
+        name_feature : int
+            Number of the feature analyzed: 0 for MMSE, 1 for Age total, 2 for Age CTRL
     :Returns:
         None
     """
 
     # Divide the dataset in train, validation and test in a static way
-    X_train, X_test, Y_train, Y_test = train_test_split(X, feature, test_size=size, random_state=11)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, feature, test_size=size, random_state=14)
 
     #Augment the data using VolumeAugmentation class
     mass_gen = VolumeAugmentation(X_train, Y_train, shape=(X.shape[1], X.shape[2], X.shape[3]))
@@ -77,7 +80,8 @@ def training_tl(X, feature, size):
 
     # Build the base model
     base_model.summary()
-    base_model.load_weights('Modelli/CNN_weights_15_50_100.h5', by_name=True)
+    base_model.load_weights('Modelli/CNN_weights_Hipp_finale.h5', by_name=True)
+    #base_model.load_weights('Modelli/CNN_VOID_weights_15.h5', by_name=True)
     base_model.trainable = False
 
     # Set the learning Rate
@@ -100,14 +104,15 @@ def training_tl(X, feature, size):
     model = tf.keras.Model(input2, output2)
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=initial_learning_rate), loss='MAE', metrics=['MSE'])
 
+    # Change the name of the file
     # Define callbacks
     checkpoint_cb = tf.keras.callbacks.ModelCheckpoint(
-            "3d_mmse_regression_{feature}_{size}.h5", save_best_only=True
+            "3d_regression_AgeCTRL_20_{val_MSE}_hipp_finalissima.h5", save_best_only=True
     )
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10, verbose=1)
 
     #Fit the data
-    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.2, batch_size=32, shuffle=True, epochs=30, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
+    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=True, epochs=30, callbacks=[checkpoint_cb, early_stopping, reduce_Rl])
 
     #history contains information about the training
     print(history.history.keys())
@@ -129,14 +134,15 @@ def training_tl(X, feature, size):
     base_model.trainable = True
     model.summary()
 
+    # Change the name of the file
     checkpoint_tun = tf.keras.callbacks.ModelCheckpoint(
-            "3d_mmse_regression_{feature}_{size}_tun.h5", save_best_only=True
+            '3d_regression_AGECTRL_20_{val_MSE}_hipp_tun_finalissima.h5', save_best_only=True
     )
 
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5), loss='MAE', metrics=['MSE'])
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-7), loss='MAE', metrics=['MSE'])
 
 
-    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.2, batch_size=32, shuffle=True, epochs=10, callbacks=[checkpoint_tun, early_stopping, reduce_Rl])
+    history=model.fit(X_train_tot,Y_train_tot, validation_split=0.1, batch_size=32, shuffle=True, epochs=10, callbacks=[checkpoint_tun, early_stopping, reduce_Rl])
 
     print(history.history.keys())
 
@@ -152,9 +158,8 @@ def training_tl(X, feature, size):
         ax[i].legend(["train", "val"])
 
     plt.show()
+    return None
 
-    #Display ROC curve and calculate AUC
-    auc = roc_curve(X_test, Y_test, model)
 
 if __name__=='__main__':
     dataset_path_AD_ROI = "AD_CTRL/AD_ROI_TH"
@@ -172,23 +177,24 @@ if __name__=='__main__':
     X=normalize(X)
 
     age=np.array(age)
-    AGE_MAX=np.max(age)
+    AGE_MAX=100
     age_norm=age/AGE_MAX
 
     mmse=np.array(mmse)
-    MAX_MMSE=np.max(mmse)
+    MAX_MMSE=30
     mmse_norm= mmse/MAX_MMSE
 
-    Xctrl = X[144:332,:,:,:]
-    age_ctrl = age[144:332]
-    AGE_CTRL_MAX=np.max(age_ctrl)
-    age_ctrl_norm=age_ctrl/AGE_CTRL_MAX
+    Xctrl = X[144:333,:,:,:]
+    age_ctrl = age[144:333]
+    age_ctrl_norm=age_ctrl/AGE_MAX
+
+    # Choose the dataset to train
     '''
     # Train the transfer learning model for the age with AD and CTRL subjects
-    training_tl(X, age_norm, 0.15)
+    training_tl(X, age_norm, 0.15, number_feature=1)
 
     # Train the transfer learning model for the mmse of AD and CTRL subjects
-    training_tl(X, mmse_norm, 0.15)
+    training_tl(X, mmse_norm, 0.15, number_feature=0)
     '''
     # Train the transfer learning model for the age of CTRL subjects
-    training_tl(X, age_ctrl_norm, 0.2)
+    training_tl(Xctrl, age_ctrl_norm, 0.2, number_feature=2)

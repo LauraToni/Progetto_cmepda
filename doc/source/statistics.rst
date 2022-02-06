@@ -9,13 +9,13 @@ Statistics analysis to study the results of the neural network.
 
 .. autofunction:: statistics.roc_curve
 
-.. autofunction:: statistics.plot_cv_roc
-
 .. autofunction:: statistics.dataframe_test
 
-.. autofunction:: statistics.correlation
+.. autofunction:: statistics.retta
+
+.. autofunction:: statistics.permutation_age
+
+.. autofunction:: statistics.fit
 
 .. autofunction:: statistics.permutation
-
-.. autofunction:: statistics.scatter_plot
 
