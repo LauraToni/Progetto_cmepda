@@ -16,7 +16,7 @@ except:
 
 from data_augmentation import VolumeAugmentation
 from input_dati import read_dataset,import_csv, cut_file_name
-from statistics import roc_curve, plot_cv_roc
+from statistics import roc_curve
 
 #Attivare il comando sottostante per utilizzare plaidml
 #os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
