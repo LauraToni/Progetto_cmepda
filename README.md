@@ -48,14 +48,14 @@ This code implements the transfer learning on three different datasets:
 
 1. Age of AD and CTRL images (our models are saved in 3d_regression_Age_15_0.0052_finale.h5 );
 
-2. MMSE of AD and CTRL images (our models are saved in 3d_regression_MMSE_15_0.017_finale.h5;
+2. MMSE of AD and CTRL images (our models are saved in 3d_regression_MMSE_15_0.017_finale.h5);
 
 3. Age of CTRL images only (our models are saved in 3d_regression_AgeCTRL_20_0.0086_finale.h5).
 
-To select the dataset on which implement the transfer learning just comment the two you're not interested in and change the name of the saved model in the function that create the checkpoint. 
+To select the dataset on which implement the transfer learning just comment the two you're not interested in and change the name of the saved model in the function that creates the checkpoint. 
 
 ```python
-   	# Choose the dataset to train
+    # Choose the dataset to train
     # Train the transfer learning model for the age with AD and CTRL subjects
     training_tl(X, age_norm, 0.15)
     # Train the transfer learning model for the mmse of AD and CTRL subjects
@@ -65,7 +65,7 @@ To select the dataset on which implement the transfer learning just comment the 
 ```
 
 ```python
- 	# Change the name of the file
+    # Change the name of the file
     # Define callbacks
     checkpoint_cb = tf.keras.callbacks.ModelCheckpoint(
             "3d_mmse_regression_{feature}_{size}.h5", save_best_only=True
@@ -73,7 +73,7 @@ To select the dataset on which implement the transfer learning just comment the 
 ```
 
 ```python
-	# Change the name of the file
+    # Change the name of the file
     # Define callbacks
     checkpoint_tune = tf.keras.callbacks.ModelCheckpoint(
             "3d_mmse_regression_{feature}_{size}_tun.h5", save_best_only=True
