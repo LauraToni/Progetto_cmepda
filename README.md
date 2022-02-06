@@ -25,16 +25,23 @@ Run the MATLAB code Processing.m to cut the original images into volumes of 50x5
 
 <img src="Progetto_cmepda/images/ROI_TH_rettangolo.png" width="300"/>  <img src="Progetto_cmepda/images/ROI_VOID_rettangolo.png" width="300"/>
 
+This code also creates volumes of 100x120x100 (saved in AD_ROI_LARGE and CTRL_ROI_LARGE) and 100x100x100 (saved in AD_ROI_TOTAL and CTRL_ROI_TOTAL) containing the whole brain MRIs images without the black borders.
+
+<img src="Progetto_cmepda/images/ROI_TOTAL_100_rettangolo.png" width="300"/>  <img src="Progetto_cmepda/images/ROI_LARGE_120_rettangolo.png" width="300"/>
+
+
 ### Step 3: CNN model
 
-Run the Python code CNN.py to create and train the convolutional neural network on the images in AD_ROI_TH/ and CTRL_ROI_TH/. The model will be saved in the file 3d_CNN_15_50_100_Hipp.h5 and the wheights will be saved in CNN_weights_15_50_100.h5. The loss and the ROC will be displayed at the end of the train.
+Run the Python code CNN.py to create and train the convolutional neural network on the images in AD_ROI_TH/ and CTRL_ROI_TH/. The model will be saved in the file 3d_CNN_Hipp_finale.h5 and the wheights will be saved in CNN_weights_Hipp_finale.h5. The loss and the ROC will be displayed at the end of the train.
 
 <img src="Progetto_cmepda/images/loss_15_50-100.png" width="600"/>   
 
 
 ### Step 4: Transfer learning to predict mmse and age
 
-Run the codes CNN_regression_age.py and CNN_regression_mmse to implement transfer learning and use the pre-trained CNN layers to predict the age and the mmse. The loss of the regression model will be displayed at the end of the train.
+Run the codes CNN_regression.py to implement transfer learning and use the pre-trained CNN layers to predict the age and the mmse.
+This code implements the transfer learning three times, first on the age of AD and CTRL images, secondly for the mmse of AD and CTRL images and lastly on the age of CTRL images only. 
+The loss of the regression model will be displayed at the end of the train.
 
 <img src="Progetto_cmepda/images/loss_mmse_regression.png" width="450"/> <img src="Progetto_cmepda/images/loss_mmse_regression_tuning.png" width="450"/>  
 
