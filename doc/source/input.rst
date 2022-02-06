@@ -6,3 +6,4 @@ It also arranges images and labels.
 
 .. autofunction:: input_dati.read_dataset
 .. autofunction:: input_dati.import_csv
+.. autofunction:: input_dati.cut_file_name
