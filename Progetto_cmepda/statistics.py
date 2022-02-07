@@ -7,10 +7,9 @@ import tensorflow as tf
 import seaborn as sns
 from sklearn import metrics
 from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import train_test_split, StratifiedKFold
-from sklearn.pipeline import Pipeline
-from input_dati import read_dataset, import_csv
+from sklearn.model_selection import train_test_split
 from scipy.optimize import curve_fit
+from input_dati import read_dataset, import_csv
 SOGLIA = 0.4273
 #pylint: disable=invalid-name
 #pylint: disable=line-too-long
