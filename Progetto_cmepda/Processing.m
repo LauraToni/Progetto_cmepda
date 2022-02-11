@@ -91,14 +91,14 @@ title(strcat('SAGITTAL view - slice= ', num2str(61)));
 
 imageAD_ROI=[];
 
-for i=1:144  % we consider just cubic ROIs 144
+for i=1:144 % we consider just cubic ROIs 144
     disp(i)
-    P1a=11;
-    P1b=109;
-    P2a=12;
-    P2b=138;
-    P3a=24;
-    P3b=110;
+    P1a=15;
+    P1b=104;
+    P2a=25;
+    P2b=114;
+    P3a=10;
+    P3b=99;
     ROI_P=imageAD(P1a:P1b,P2a:P2b,P3a:P3b,i);
     ROI_P=squeeze(ROI_P);
     imageAD_ROI=cat(4,imageAD_ROI,ROI_P);
@@ -110,12 +110,6 @@ imageCTRL_ROI=[];
 
 for i=1:189  % we consider just cubic ROIs 189
     disp(i)
-    P1a=11; %7
-    P1b=109; %114
-    P2a=12; %6
-    P2b=138; %140
-    P3a=24; %1
-    P3b=110; %109
     ROI_P=imageCTRL(P1a:P1b,P2a:P2b,P3a:P3b,i);
     ROI_P=squeeze(ROI_P);
     imageCTRL_ROI=cat(4,imageCTRL_ROI,ROI_P);
@@ -126,14 +120,14 @@ end
 
 figure;
 subplot(2,2,1)
-imagesc(squeeze(imageAD_ROI(:,:,3,3))); colormap gray %la z è fissata, trasversale
-title(strcat('ROI AD- TRASVERSE view - slice= ', num2str(3)));
+imagesc(squeeze(imageAD_ROI(:,:,50,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI TOTAL AD- TRASVERSE view - slice= ', num2str(50)));
 subplot(2,2,3)
-imagesc(squeeze(imageAD_ROI(:,3,:,3))); colormap gray %la y è fissata, coronale
-title(strcat('ROI AD - CORONAL view - slice= ', num2str(3)));
+imagesc(squeeze(imageAD_ROI(:,50,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI TOTAL AD - CORONAL view - slice= ', num2str(50)));
 subplot(2,2,4)
-imagesc(squeeze(imageAD_ROI(3,:,:,3))); colormap gray %la x è fissata, sagittale
-title(strcat('ROI AD- SAGITTAL view - slice= ', num2str(3)));
+imagesc(squeeze(imageAD_ROI(50,:,:,3))); colormap gray %la x è fissata, sagittale
+title(strcat('ROI TOTAL AD- SAGITTAL view - slice= ', num2str(50)));
 
 
 
@@ -142,14 +136,75 @@ title(strcat('ROI AD- SAGITTAL view - slice= ', num2str(3)));
 
 figure;
 subplot(2,2,1)
-imagesc(squeeze(imageCTRL_ROI(:,:,3,3))); colormap gray %la z è fissata, trasversale
-title(strcat('ROI CTRL- TRASVERSE view - slice= ', num2str(3)));
+imagesc(squeeze(imageCTRL_ROI(:,:,50,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI TOTAL CTRL- TRASVERSE view - slice= ', num2str(50)));
 subplot(2,2,3)
-imagesc(squeeze(imageCTRL_ROI(:,3,:,3))); colormap gray %la y è fissata, coronale
-title(strcat('ROI CTRL- CORONAL view - slice= ', num2str(3)));
+imagesc(squeeze(imageCTRL_ROI(:,50,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI TOTAL CTRL- CORONAL view - slice= ', num2str(50)));
 subplot(2,2,4)
-imagesc(squeeze(imageCTRL_ROI(3,:,:,3))); colormap gray %la x è fissata, sagittale
-title(strcat('ROI CTRL- SAGITTAL view - slice= ', num2str(3)));
+imagesc(squeeze(imageCTRL_ROI(50,:,:,3))); colormap gray %la x è fissata, sagittale
+title(strcat('ROI TOTAL CTRL- SAGITTAL view - slice= ', num2str(50)));
+
+%% Create a bounding box
+
+% Bounding box AD images large
+
+imageAD_ROI_L=[];
+
+for i=1:144 % we consider just cubic ROIs 144
+    disp(i)
+    P1al=15;
+    P1bl=104;
+    P2al=20;
+    P2bl=129;
+    P3al=10;
+    P3bl=99;
+    ROI_L=imageAD(P1al:P1bl,P2al:P2bl,P3al:P3bl,i);
+    ROI_L=squeeze(ROI_L);
+    imageAD_ROI_L=cat(4,imageAD_ROI_L,ROI_L);
+end
+
+% Bounding box CTRL images
+
+imageCTRL_ROI_L=[];
+
+for i=1:189  % we consider just cubic ROIs 189
+    disp(i)
+    ROI_L=imageCTRL(P1al:P1bl,P2al:P2bl,P3al:P3bl,i);
+    ROI_L=squeeze(ROI_L);
+    imageCTRL_ROI_L=cat(4,imageCTRL_ROI_L,ROI_L);
+end
+
+% Visualize imageAD_ROI
+% visualize the largest slice of one image, in each dimension.
+
+figure;
+subplot(2,2,1)
+imagesc(squeeze(imageAD_ROI_L(:,:,50,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI TOTAL AD LARGE- TRASVERSE view - slice= ', num2str(50)));
+subplot(2,2,3)
+imagesc(squeeze(imageAD_ROI_L(:,60,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI TOTAL AD LARGE- CORONAL view - slice= ', num2str(60)));
+subplot(2,2,4)
+imagesc(squeeze(imageAD_ROI_L(50,:,:,3))); colormap gray %la x è fissata, sagittale
+title(strcat('ROI TOTAL AD LARGE- SAGITTAL view - slice= ', num2str(50)));
+
+
+
+% Visualize imageCTRL_ROI
+% visualize the largest slice of one image, in each dimension.
+
+figure;
+subplot(2,2,1)
+imagesc(squeeze(imageCTRL_ROI_L(:,:,50,3))); colormap gray %la z è fissata, trasversale
+title(strcat('ROI TOTAL CTRL LARGE- TRASVERSE view - slice= ', num2str(50)));
+subplot(2,2,3)
+imagesc(squeeze(imageCTRL_ROI_L(:,60,:,3))); colormap gray %la y è fissata, coronale
+title(strcat('ROI TOTAL CTRL LARGE- CORONAL view - slice= ', num2str(60)));
+subplot(2,2,4)
+imagesc(squeeze(imageCTRL_ROI_L(50,:,:,3))); colormap gray %la x è fissata, sagittale
+title(strcat('ROI TOTAL CTRL LARGE- SAGITTAL view - slice= ', num2str(50)));
+
 
 %% Create a bounding box of a region without the hyppocampus
 
@@ -176,12 +231,6 @@ imageCTRL_ROI_VOID=[];
 
 for i=1:189  % we  consider just cubic ROIs 189
     disp(i)
-    P1av=35; %7
-    P1bv=84; %114
-    P2av=85; %6
-    P2bv=134; %140
-    P3av=55; %1
-    P3bv=104; %109
     ROI_P_VOID=imageCTRL(P1av:P1bv,P2av:P2bv,P3av:P3bv,i);
     ROI_P_VOID=squeeze(ROI_P_VOID);
     imageCTRL_ROI_VOID=cat(4,imageCTRL_ROI_VOID,ROI_P_VOID);
@@ -240,13 +289,7 @@ end
 imageCTRL_ROI_TH=[];
 
 for i=1:189  % we  consider just cubic ROIs 189
-    disp(i)
-    P1at=36; 
-    P1bt=85; 
-    P2at=51; %58
-    P2bt=100; %108
-    P3at=26; 
-    P3bt=75; 
+    disp(i) 
     ROI_P_TH=imageCTRL(P1at:P1bt,P2at:P2bt,P3at:P3bt,i);
     ROI_P_TH=squeeze(ROI_P_TH);
     imageCTRL_ROI_TH=cat(4,imageCTRL_ROI_TH,ROI_P_TH);
@@ -294,8 +337,12 @@ fileID='AD_CTRL/AD_CTRL_metadata.csv';
 [filepath,name,ext] = fileparts(fileID);
 fileOUTpath_AD_VOID=fullfile(filepath,'AD_ROI_VOID/');
 fileOUTpath_AD_TH=fullfile(filepath,'AD_ROI_TH/');
+fileOUTpath_AD_TOTAL=fullfile(filepath,'AD_ROI_TOTAL/');
+fileOUTpath_AD_LARGE=fullfile(filepath,'AD_ROI_LARGE/');
 fileOUTpath_CTRL_VOID=fullfile(filepath,'CTRL_ROI_VOID/');
 fileOUTpath_CTRL_TH=fullfile(filepath,'CTRL_ROI_TH/');
+fileOUTpath_CTRL_TOTAL=fullfile(filepath,'CTRL_ROI_TOTAL/');
+fileOUTpath_CTRL_LARGE=fullfile(filepath,'CTRL_ROI_LARGE/');
 
 if ~exist(fileOUTpath_AD_VOID, 'dir')
     mkdir(fileOUTpath_AD_VOID);
@@ -303,6 +350,22 @@ end
 
 if ~exist(fileOUTpath_CTRL_VOID, 'dir')
     mkdir(fileOUTpath_CTRL_VOID);
+end
+
+if ~exist(fileOUTpath_AD_TOTAL, 'dir')
+    mkdir(fileOUTpath_AD_TOTAL);
+end
+
+if ~exist(fileOUTpath_CTRL_TOTAL, 'dir')
+    mkdir(fileOUTpath_CTRL_TOTAL);
+end
+
+if ~exist(fileOUTpath_AD_LARGE, 'dir')
+    mkdir(fileOUTpath_AD_LARGE);
+end
+
+if ~exist(fileOUTpath_CTRL_LARGE, 'dir')
+    mkdir(fileOUTpath_CTRL_LARGE);
 end
 
 if ~exist(fileOUTpath_AD_TH, 'dir')
@@ -324,6 +387,10 @@ for i=1:144 %144
     niftiwrite(imageAD_ROI_VOID(:,:,:,i),fileIDout_AD_VOID);
     fileIDout_AD_TH=strcat(fileOUTpath_AD_TH,'smwc1AD-',s,'_ROI_TH','.nii');
     niftiwrite(imageAD_ROI_TH(:,:,:,i),fileIDout_AD_TH);
+    fileIDout_AD_TOTAL=strcat(fileOUTpath_AD_TOTAL,'smwc1AD-',s,'_ROI_T','.nii');
+    niftiwrite(imageAD_ROI(:,:,:,i),fileIDout_AD_TOTAL);
+    fileIDout_AD_LARGE=strcat(fileOUTpath_AD_LARGE,'smwc1AD-',s,'_ROI_L','.nii');
+    niftiwrite(imageAD_ROI_L(:,:,:,i),fileIDout_AD_LARGE);
 end
 
 disp('... done!');
@@ -339,6 +406,10 @@ for i=1:189 %189
     niftiwrite(imageCTRL_ROI_VOID(:,:,:,i),fileIDout_CTRL_VOID);
     fileIDout_CTRL_TH=strcat(fileOUTpath_CTRL_TH,'smwc1CTRL-',s,'_ROI_TH','.nii');
     niftiwrite(imageCTRL_ROI_TH(:,:,:,i),fileIDout_CTRL_TH);
+    fileIDout_CTRL_TOTAL=strcat(fileOUTpath_CTRL_TOTAL,'smwc1CTRL-',s,'_ROI_T','.nii');
+    niftiwrite(imageCTRL_ROI(:,:,:,i),fileIDout_CTRL_TOTAL);
+    fileIDout_CTRL_LARGE=strcat(fileOUTpath_CTRL_LARGE,'smwc1CTRL-',s,'_ROI_L','.nii');
+    niftiwrite(imageCTRL_ROI_L(:,:,:,i),fileIDout_CTRL_LARGE);
 end
 
 disp('... done!');
@@ -410,3 +481,56 @@ title(strcat('Void region - CORONAL view - slice= ', num2str(P2av)));
 subplot(2,2,4)
 imagesc(squeeze(imageAD_RECV(P1av,:,:))); colormap gray %la x è fissata, sagittale
 title(strcat('Void region - SAGITTAL view - slice= ', num2str(P1av)));
+
+%% Display a rectangle enclosing the total region
+
+ROI_T=zeros(size(imageAD));
+ROI_T(P1a:P1b,P2a:P2b,P3a:P3b)=imageAD(P1a:P1b,P2a:P2b,P3a:P3b,4);
+maximum=max(max(ROI_T(:,:,P3a)));
+imageAD_RECT=imageAD(:,:,:,4);
+
+% we display a rectangle around the ROI
+imageAD_RECT(P1a:P1b,P2a:P2b,P3b)=maximum;
+imageAD_RECT(P1a:P1b,P2a:P2b,P3a)=maximum;
+imageAD_RECT(P1a,P2a:P2b,P3a:P3b)=maximum;
+imageAD_RECT(P1b,P2a:P2b,P3a:P3b)=maximum;
+imageAD_RECT(P1a:P1b,P2a,P3a:P3b)=maximum;
+imageAD_RECT(P1a:P1b,P2b,P3a:P3b)=maximum;
+
+figure
+subplot(2,2,1)
+imagesc(squeeze(imageAD_RECT(:,:,50))); colormap gray %la z è fissata, trasversale
+title(strcat('Total region - TRASVERSE view - slice= ', num2str(50)));
+subplot(2,2,3)
+imagesc(squeeze(imageAD_RECT(:,50,:))); colormap gray %la y è fissata, coronale
+title(strcat('Total region - CORONAL view - slice= ', num2str(50)));
+subplot(2,2,4)
+imagesc(squeeze(imageAD_RECT(50,:,:))); colormap gray %la x è fissata, sagittale
+title(strcat('Total region - SAGITTAL view - slice= ', num2str(50)));
+
+%% Display a rectangle enclosing the total large region
+
+ROI_L=zeros(size(imageAD));
+ROI_L(P1al:P1bl,P2al:P2bl,P3al:P3bl)=imageAD(P1al:P1bl,P2al:P2bl,P3al:P3bl,4);
+maximum=max(max(ROI_L(:,:,P3al)));
+imageAD_RECL=imageAD(:,:,:,4);
+
+% we display a rectangle around the ROI
+imageAD_RECL(P1al:P1bl,P2al:P2bl,P3bl)=maximum;
+imageAD_RECL(P1al:P1bl,P2al:P2bl,P3al)=maximum;
+imageAD_RECL(P1al,P2al:P2bl,P3al:P3bl)=maximum;
+imageAD_RECL(P1bl,P2al:P2bl,P3al:P3bl)=maximum;
+imageAD_RECL(P1al:P1bl,P2al,P3al:P3bl)=maximum;
+imageAD_RECL(P1al:P1bl,P2bl,P3al:P3bl)=maximum;
+
+
+figure
+subplot(2,2,1)
+imagesc(squeeze(imageAD_RECL(:,:,50))); colormap gray %la z è fissata, trasversale
+title(strcat('Total region large - TRASVERSE view - slice= ', num2str(50)));
+subplot(2,2,3)
+imagesc(squeeze(imageAD_RECL(:,50,:))); colormap gray %la y è fissata, coronale
+title(strcat('Total region large - CORONAL view - slice= ', num2str(50)));
+subplot(2,2,4)
+imagesc(squeeze(imageAD_RECL(50,:,:))); colormap gray %la x è fissata, sagittale
+title(strcat('Total region large - SAGITTAL view - slice= ', num2str(50)));
